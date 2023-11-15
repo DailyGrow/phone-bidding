@@ -46,6 +46,8 @@ pip install -r requirements.txt
 Now you can run the project with this command
 
 ```
+python manage.py migrate
+
 python manage.py runserver
 ```
 

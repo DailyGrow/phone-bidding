@@ -4,6 +4,8 @@ from django.db import models
 from django.db.models import Sum
 from django.shortcuts import reverse
 from django_countries.fields import CountryField
+from django.core.validators import MinValueValidator
+from django.utils import timezone
 
 
 CATEGORY_CHOICES = (
@@ -27,22 +29,40 @@ ADDRESS_CHOICES = (
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    address = models.TextField(null=True, blank=True)
+    phone = models.CharField(max_length=15, null=True, blank=True)
     stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
     one_click_purchasing = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
 
-
 class Item(models.Model):
-    title = models.CharField(max_length=100)
-    price = models.FloatField()
-    discount_price = models.FloatField(blank=True, null=True)
-    category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
-    label = models.CharField(choices=LABEL_CHOICES, max_length=1)
-    slug = models.SlugField()
-    description = models.TextField()
-    image = models.ImageField()
+    CONDITION_CHOICES = (
+        ('NEW', 'New'),
+        ('USED', 'Used'),
+    )
+    SYSTEM_CHOICES = (
+        ('IOS', 'iOS'),
+        ('ANDROID', 'Android'),
+    )
+    BRAND_CHOICES = (
+        ('APPLE', 'apple'),
+        ('SAMSUNG', 'samsung'),
+        ('XIAOME', 'xiaome'),
+    )
+    seller = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='items', on_delete=models.CASCADE, null=True)
+    title = models.CharField(max_length=255, null=True)
+    description = models.TextField(null=True)
+    quantity = models.IntegerField(default=1)
+    starting_bid = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(0.01)], null=True)
+    condition = models.CharField(max_length=10, choices=CONDITION_CHOICES, null=True)
+    system = models.CharField(max_length=10, choices=SYSTEM_CHOICES, null=True)
+    brand = models.CharField(max_length=50, choices=BRAND_CHOICES, null=True)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    slug = models.SlugField(null=True)
+    image = models.ImageField(null=True)
 
     def __str__(self):
         return self.title
@@ -61,6 +81,34 @@ class Item(models.Model):
         return reverse("core:remove-from-cart", kwargs={
             'slug': self.slug
         })
+
+# class Item(models.Model):
+#     title = models.CharField(max_length=100)
+#     price = models.FloatField()
+#     discount_price = models.FloatField(blank=True, null=True)
+#     category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
+#     label = models.CharField(choices=LABEL_CHOICES, max_length=1)
+#     slug = models.SlugField()
+#     description = models.TextField()
+#     image = models.ImageField()
+
+#     def __str__(self):
+#         return self.title
+
+#     def get_absolute_url(self):
+#         return reverse("core:product", kwargs={
+#             'slug': self.slug
+#         })
+
+#     def get_add_to_cart_url(self):
+#         return reverse("core:add-to-cart", kwargs={
+#             'slug': self.slug
+#         })
+
+#     def get_remove_from_cart_url(self):
+#         return reverse("core:remove-from-cart", kwargs={
+#             'slug': self.slug
+#         })
 
 
 class OrderItem(models.Model):
@@ -86,7 +134,19 @@ class OrderItem(models.Model):
         if self.item.discount_price:
             return self.get_total_discount_item_price()
         return self.get_total_item_price()
+    
+class Bid(models.Model):
+    item = models.ForeignKey(Item, related_name='bids', on_delete=models.CASCADE)
+    bidder = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='bids', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(0.01)])
+    time = models.DateTimeField(default=timezone.now)
 
+class Transaction(models.Model):
+    item = models.OneToOneField(Item, on_delete=models.CASCADE)
+    buyer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='purchases', on_delete=models.CASCADE)
+    seller = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sales', on_delete=models.CASCADE)
+    transaction_time = models.DateTimeField(default=timezone.now)
+    tracking_number = models.CharField(max_length=255, blank=True)
 
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -198,5 +258,20 @@ def userprofile_receiver(sender, instance, created, *args, **kwargs):
 #     class Meta:
 #         # managed = False
 #         db_table = 'employee'
+
+class Message(models.Model):
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sent_messages', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='received_messages', on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, related_name='messages', on_delete=models.CASCADE, null=True, blank=True)
+    content = models.TextField()
+    sent_time = models.DateTimeField(default=timezone.now)
+
+class Rating(models.Model):
+    RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]  # 1 to 5 rating
+    rated_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='ratings_made', on_delete=models.CASCADE)
+    rated_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='ratings_received', on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
+    comment = models.TextField(blank=True)
 
 post_save.connect(userprofile_receiver, sender=settings.AUTH_USER_MODEL)

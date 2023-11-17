@@ -50,6 +50,7 @@ class Item(models.Model):
         ('APPLE', 'apple'),
         ('SAMSUNG', 'samsung'),
         ('XIAOME', 'xiaome'),
+        ('HUAWEI', 'huawei'),
     )
     seller = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='items', on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=255, null=True)

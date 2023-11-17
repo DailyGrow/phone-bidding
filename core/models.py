@@ -38,6 +38,7 @@ class UserProfile(models.Model):
         return self.user.username
 
 class Item(models.Model):
+    id = models.AutoField(primary_key=True)
     CONDITION_CHOICES = (
         ('NEW', 'New'),
         ('USED', 'Used'),

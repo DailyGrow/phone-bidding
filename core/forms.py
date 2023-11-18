@@ -1,7 +1,7 @@
 from django import forms
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
-
+from django.core.exceptions import ValidationError
 
 PAYMENT_CHOICES = (
     ('S', 'Stripe'),
@@ -59,3 +59,16 @@ class PaymentForm(forms.Form):
     stripeToken = forms.CharField(required=False)
     save = forms.BooleanField(required=False)
     use_default = forms.BooleanField(required=False)
+
+class BidForm(forms.Form):
+    amount = forms.DecimalField(decimal_places=2, max_digits=12, min_value=0.01)
+    def __init__(self, *args, **kwargs):
+        self.item = kwargs.pop('item', None)
+        super(BidForm, self).__init__(*args, **kwargs)
+
+    def clean_amount(self):
+        amount = self.cleaned_data['amount']
+        if self.item and amount < self.item.starting_bid:
+            raise ValidationError(f"Your bid must be at least ${self.item.starting_bid}.")
+        return amount
+    

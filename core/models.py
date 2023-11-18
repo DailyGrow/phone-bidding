@@ -50,8 +50,11 @@ class Item(models.Model):
     BRAND_CHOICES = (
         ('APPLE', 'apple'),
         ('SAMSUNG', 'samsung'),
-        ('XIAOME', 'xiaome'),
+        ('XIAOMI', 'xiaomi'),
         ('HUAWEI', 'huawei'),
+        ('GOOGLE', 'google'),
+        ('ONEPLUS', 'one plus'),
+        ('SONY', 'sony'),
     )
     seller = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='items', on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=255, null=True)
@@ -73,16 +76,9 @@ class Item(models.Model):
         return reverse("core:product", kwargs={
             'slug': self.slug
         })
-
-    def get_add_to_cart_url(self):
-        return reverse("core:add-to-cart", kwargs={
-            'slug': self.slug
-        })
-
-    def get_remove_from_cart_url(self):
-        return reverse("core:remove-from-cart", kwargs={
-            'slug': self.slug
-        })
+    
+    def get_bid_url(self):
+        return reverse("core:place_bid", kwargs={'slug': self.slug})
 
 # class Item(models.Model):
 #     title = models.CharField(max_length=100)

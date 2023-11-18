@@ -12,8 +12,8 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, View
 
-from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
-from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile
+from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm, BidForm
+from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -35,7 +35,6 @@ def is_valid_form(values):
         if field == '':
             valid = False
     return valid
-
 
 class CheckoutView(View):
     def get(self, *args, **kwargs):
@@ -380,7 +379,10 @@ class OrderSummaryView(LoginRequiredMixin, View):
 class ItemDetailView(DetailView):
     model = Item
     template_name = "product.html"
-
+    def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context['bids'] = Bid.objects.filter(item=self.get_object()).order_by('-time')
+            return context
 
 @login_required
 def add_to_cart(request, slug):
@@ -532,10 +534,31 @@ class RequestRefundView(View):
                 return redirect("core:request-refund")
 
 
-# def testmysql(request):
-#     employee = Employee.objects.all()
-#     context = {
-#         'user_ssn': employee[0].ssn,
-#         'user_name': employee[0].lname,
-#     }
-#     return render(request, 'test.html', context)
+class BidView(LoginRequiredMixin, View):
+    template_name = 'place_bid.html'
+
+    def get(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        item = get_object_or_404(Item, slug=slug)
+        form = BidForm(item=item)
+        bids = Bid.objects.filter(item=item).order_by('-time')
+        context = {'form': form, 'item': item, 'bids': bids}
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        item = get_object_or_404(Item, slug=slug)
+        form = BidForm(request.POST, item=item)
+        bids = Bid.objects.filter(item=item).order_by('-time')
+        context = {'form': form, 'item': item, 'bids': bids}
+        if form.is_valid():
+            Bid.objects.create(
+                item=item, 
+                bidder=request.user, 
+                amount=form.cleaned_data['amount'],
+                time=timezone.now()
+            )
+            messages.success(request, "Your bid was placed successfully!")
+            return redirect(item.get_absolute_url())
+        else:
+            return render(request, self.template_name, context)

@@ -10,7 +10,7 @@ from .views import (
     PaymentView,
     AddCouponView,
     RequestRefundView,
-
+    BidView,
 )
 
 app_name = 'core'
@@ -27,5 +27,6 @@ urlpatterns = [
          name='remove-single-item-from-cart'),
     path('payment/<payment_option>/', PaymentView.as_view(), name='payment'),
     path('request-refund/', RequestRefundView.as_view(), name='request-refund'),
+    path('bid/<slug:slug>/', BidView.as_view(), name='place_bid'),
     # path('test/',testmysql, name='test')
 ]

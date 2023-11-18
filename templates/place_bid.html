@@ -1,0 +1,66 @@
+{% extends "base.html" %} {% block content %}
+
+<main class="mt-5 pt-4">
+    <div class="container dark-grey-text mt-5">
+        <!--Grid row-->
+        <div class="row wow fadeIn">
+            <!--Grid column for Image-->
+            <div class="col-md-6 mb-4">
+                <img
+                    src="{{ item.image.url }}"
+                    class="img-fluid"
+                    alt="{{ item.title }}"
+                />
+            </div>
+            <!--Grid column for Image-->
+
+            <!--Grid column for Product Details-->
+            <div class="col-md-6 mb-4">
+                <!--Content-->
+                <div class="p-4">
+                    <div class="mb-3">
+                        <span class="badge purple mr-1"
+                            >{{ item.get_category_display }}</span
+                        >
+                    </div>
+
+                    <p class="lead">
+                        <span>Bid starting at: ${{ item.starting_bid }}</span>
+                    </p>
+
+                    <p class="lead font-weight-bold">Description</p>
+                    <p>{{ item.description }}</p>
+
+                    <!-- Bidding Form -->
+                    <div class="mt-4">
+                        <h4>Place Your Bid</h4>
+                        <form method="post">
+                            {% csrf_token %} {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary">
+                                Place Bid
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <!--Content-->
+            </div>
+            <!--Grid column for Product Details-->
+        </div>
+        <!--Grid row-->
+
+        <!-- Bid details -->
+        <div class="mt-4">
+            <h3>Bids</h3>
+            {% for bid in bids %}
+            <p>Bidder: {{ bid.bidder.username }}</p>
+            <p>Amount: ${{ bid.amount }}</p>
+            <p>Date: {{ bid.time }}</p>
+            <hr />
+            {% empty %}
+            <p>No bids yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+{% endblock content %}

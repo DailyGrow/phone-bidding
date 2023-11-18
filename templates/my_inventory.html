@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block content %}
+<main class="container mt-5">
+    <h2>My Inventory</h2>
+    <div class="row">
+        {% for item in items %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <!-- Link to the product detail page -->
+                <a href="{{ item.get_absolute_url }}">
+                    <img
+                        class="card-img-top"
+                        src="{{ item.image.url }}"
+                        alt="{{ item.title }}"
+                    />
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <!-- Another link to the product detail page -->
+                        <a href="{{ item.get_absolute_url }}"
+                            >{{ item.title }}</a
+                        >
+                    </h5>
+                    <p class="card-text">{{ item.description }}</p>
+                    <!-- Additional item details -->
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No items in your inventory.</p>
+        {% endfor %}
+    </div>
+</main>
+<!-- At the bottom of my_inventory.html -->
+<div class="container mt-4 mb-5">
+    <a href="{% url 'core:add_phone' %}" class="btn btn-success">
+        Add Phone
+        <i class="fas fa-plus"></i>
+    </a>
+</div>
+{% endblock %}

@@ -50,7 +50,7 @@
                             <i class="fas fa-shopping-cart ml-1"></i>
                         </button>
                     </form>
-                    {% endcomment %}
+                    {% endcomment %} {% if request.user != object.seller %}
                     <a
                         href="{{ object.get_bid_url }}"
                         class="btn btn-primary btn-md my-0 p"
@@ -58,6 +58,22 @@
                         Go to bid
                         <i class="fas fa-shopping-cart ml-1"></i>
                     </a>
+                    {% else %}
+                    <a
+                        href="{% url 'core:edit_product' object.slug %}"
+                        class="btn btn-info btn-md my-0 p"
+                    >
+                        Edit
+                        <i class="fas fa-edit ml-1"></i>
+                    </a>
+                    <a
+                        href="{% url 'core:delete_product' object.slug %}"
+                        class="btn btn-danger btn-md my-0 p"
+                    >
+                        Delete
+                        <i class="fas fa-trash-alt ml-1"></i>
+                    </a>
+                    {% endif %}
                 </div>
                 <!--Content-->
             </div>

@@ -6,7 +6,7 @@ from django.shortcuts import reverse
 from django_countries.fields import CountryField
 from django.core.validators import MinValueValidator
 from django.utils import timezone
-
+from django.template.defaultfilters import slugify
 
 CATEGORY_CHOICES = (
     ('S', 'Shirt'),
@@ -66,9 +66,14 @@ class Item(models.Model):
     brand = models.CharField(max_length=50, choices=BRAND_CHOICES, null=True)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
-    slug = models.SlugField(null=True)
+    slug = models.SlugField(unique=True, blank=True)
     image = models.ImageField(null=True)
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(Item, self).save(*args, **kwargs)
+    
     def __str__(self):
         return self.title
 

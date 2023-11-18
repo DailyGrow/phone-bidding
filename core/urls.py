@@ -11,6 +11,10 @@ from .views import (
     AddCouponView,
     RequestRefundView,
     BidView,
+    InventoryView,
+    ProductEditView, 
+    ProductDeleteView,
+    AddPhoneView,
 )
 
 app_name = 'core'
@@ -28,5 +32,8 @@ urlpatterns = [
     path('payment/<payment_option>/', PaymentView.as_view(), name='payment'),
     path('request-refund/', RequestRefundView.as_view(), name='request-refund'),
     path('bid/<slug:slug>/', BidView.as_view(), name='place_bid'),
-    # path('test/',testmysql, name='test')
+    path('my-inventory/', InventoryView.as_view(), name='my_inventory'),
+    path('product/edit/<slug:slug>/', ProductEditView.as_view(), name='edit_product'),
+    path('product/delete/<slug:slug>/', ProductDeleteView.as_view(), name='delete_product'),
+    path('add-phone/', AddPhoneView.as_view(), name='add_phone'),
 ]

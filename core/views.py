@@ -5,13 +5,13 @@ import stripe
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, View
-
+from django.views.generic import ListView, DetailView, View, UpdateView, DeleteView, CreateView
+from django.urls import reverse_lazy
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm, BidForm
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid
 
@@ -562,3 +562,44 @@ class BidView(LoginRequiredMixin, View):
             return redirect(item.get_absolute_url())
         else:
             return render(request, self.template_name, context)
+
+
+class InventoryView(LoginRequiredMixin, ListView):
+    model = Item
+    template_name = 'my_inventory.html'
+    context_object_name = 'items'
+
+    def get_queryset(self):
+        return Item.objects.filter(seller=self.request.user)
+    
+
+class ProductEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Item
+    fields = ['title', 'description', 'starting_bid', 'condition', 'system', 'brand', 'image']
+    template_name = 'edit_product.html'
+
+    def get_success_url(self):
+        return reverse_lazy('core:product', kwargs={'slug': self.object.slug})
+
+    def test_func(self):
+        return self.request.user == self.get_object().seller
+
+class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Item
+    template_name = 'delete_product.html'
+    success_url = reverse_lazy('core:my_inventory')  # Redirect to home page after deletion
+
+    def test_func(self):
+        return self.request.user == self.get_object().seller
+    
+class AddPhoneView(LoginRequiredMixin, CreateView):
+    model = Item
+    fields = ['title', 'description', 'starting_bid', 'condition', 'system', 'brand', 'image']
+    template_name = 'add_phone.html'
+
+    def form_valid(self, form):
+        form.instance.seller = self.request.user  # Set the seller to the current user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('core:my_inventory')  # Redirect to inventory page after adding

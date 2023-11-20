@@ -58,6 +58,7 @@
                         Go to bid
                         <i class="fas fa-shopping-cart ml-1"></i>
                     </a>
+
                     {% else %}
                     <a
                         href="{% url 'core:edit_product' object.slug %}"
@@ -73,6 +74,13 @@
                         Delete
                         <i class="fas fa-trash-alt ml-1"></i>
                     </a>
+                    <a
+                        href="{{ object.get_add_to_cart_url }}"
+                        class="btn btn-primary btn-md my-0 p"
+                    >
+                         Deal
+                        <i class="fas fa-shopping-cart ml-1"></i>
+                     </a>
                     {% endif %}
                 </div>
                 <!--Content-->

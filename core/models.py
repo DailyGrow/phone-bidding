@@ -85,6 +85,11 @@ class Item(models.Model):
     def get_bid_url(self):
         return reverse("core:place_bid", kwargs={'slug': self.slug})
 
+    def get_add_to_cart_url(self):
+        return reverse("core:add-to-cart", kwargs={
+            'slug': self.slug
+        })
+
 # class Item(models.Model):
 #     title = models.CharField(max_length=100)
 #     price = models.FloatField()
@@ -125,17 +130,19 @@ class OrderItem(models.Model):
         return f"{self.quantity} of {self.item.title}"
 
     def get_total_item_price(self):
-        return self.quantity * self.item.price
+        return self.quantity
+        # return self.quantity * self.item.price
 
     def get_total_discount_item_price(self):
-        return self.quantity * self.item.discount_price
+        return self.quantity
+        # return self.quantity * self.item.discount_price
 
     def get_amount_saved(self):
         return self.get_total_item_price() - self.get_total_discount_item_price()
 
     def get_final_price(self):
-        if self.item.discount_price:
-            return self.get_total_discount_item_price()
+        # if self.item.discount_price:
+        #     return self.get_total_discount_item_price()
         return self.get_total_item_price()
     
 class Bid(models.Model):

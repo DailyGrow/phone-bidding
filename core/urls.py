@@ -15,6 +15,9 @@ from .views import (
     ProductEditView, 
     ProductDeleteView,
     AddPhoneView,
+    make_a_deal,
+    DealView,
+
 )
 
 app_name = 'core'
@@ -36,4 +39,6 @@ urlpatterns = [
     path('product/edit/<slug:slug>/', ProductEditView.as_view(), name='edit_product'),
     path('product/delete/<slug:slug>/', ProductDeleteView.as_view(), name='delete_product'),
     path('add-phone/', AddPhoneView.as_view(), name='add_phone'),
+    path('make-a-deal/<slug>/', make_a_deal, name='make-a-deal'),
+    path('deal/', DealView.as_view(), name='deal'),
 ]

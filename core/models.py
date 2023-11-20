@@ -90,6 +90,11 @@ class Item(models.Model):
             'slug': self.slug
         })
 
+    def get_deal_url(self):
+        return reverse("core:make-a-deal", kwargs={
+            'slug': self.slug
+        })
+
 # class Item(models.Model):
 #     title = models.CharField(max_length=100)
 #     price = models.FloatField()

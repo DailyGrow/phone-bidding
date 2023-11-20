@@ -570,7 +570,18 @@ class InventoryView(LoginRequiredMixin, ListView):
     context_object_name = 'items'
 
     def get_queryset(self):
-        return Item.objects.filter(seller=self.request.user)
+        queryset = super().get_queryset()
+        queryset = queryset.filter(seller=self.request.user)  # Filter to show only user's items
+
+        system_filter = self.request.GET.get('system', 'ALL')
+        search_query = self.request.GET.get('search', '')
+
+        if system_filter != 'ALL':
+            queryset = queryset.filter(system=system_filter)
+        if search_query:
+            queryset = queryset.filter(title__icontains=search_query)
+
+        return queryset
     
 
 class ProductEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

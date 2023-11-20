@@ -40,5 +40,5 @@ urlpatterns = [
     path('product/delete/<slug:slug>/', ProductDeleteView.as_view(), name='delete_product'),
     path('add-phone/', AddPhoneView.as_view(), name='add_phone'),
     path('make-a-deal/<slug>/', make_a_deal, name='make-a-deal'),
-    path('deal/', DealView.as_view(), name='deal'),
+    path('deal/<int:bid_id>/', DealView.as_view(), name='deal'),
 ]

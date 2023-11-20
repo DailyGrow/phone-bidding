@@ -78,9 +78,9 @@
                         href="{{ object.get_deal_url }}"
                         class="btn btn-primary btn-md my-0 p"
                     >
-                         Deal
+                        Deal
                         <i class="fas fa-shopping-cart ml-1"></i>
-                     </a>
+                    </a>
                     {% endif %}
                 </div>
                 <!--Content-->
@@ -95,6 +95,11 @@
             <p>Bidder: {{ bid.bidder.username }}</p>
             <p>Amount: ${{ bid.amount }}</p>
             <p>Date: {{ bid.time }}</p>
+            {% if request.user == object.seller %}
+            <a href="{% url 'core:deal' bid.id %}" class="btn btn-primary">
+                Deal with {{ bid.bidder.username }}
+            </a>
+            {% endif %}
             <hr />
             {% empty %}
             <p>No bids yet.</p>

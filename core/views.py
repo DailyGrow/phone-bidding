@@ -377,14 +377,24 @@ class OrderSummaryView(LoginRequiredMixin, View):
 
 class DealView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
+        bid_id = kwargs.get('bid_id')
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+            bid = Bid.objects.get(id=bid_id)
+            # order = Order.objects.get(user=self.request.user, ordered=False, items__in=[bid.item])
             context = {
-                'object': order
+                # 'object': order,
+                'bid_id': bid_id,
+                'bidder_username': bid.bidder.username,  # Pass the bidder's username to the context
+                'item_title': bid.item.title,
+                'item_price': bid.amount,
+                'item_slug': bid.item.slug,
             }
             return render(self.request, 'deal.html', context)
-        except ObjectDoesNotExist:
-            messages.warning(self.request, "Find your bidder")
+        except Bid.DoesNotExist:
+            messages.warning(self.request, "Bid not found")
+            return redirect("/")
+        except Order.DoesNotExist:
+            messages.warning(self.request, "Order not found")
             return redirect("/")
 
 class ItemDetailView(DetailView):

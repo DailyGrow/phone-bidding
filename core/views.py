@@ -14,6 +14,8 @@ from django.views.generic import ListView, DetailView, View, UpdateView, DeleteV
 from django.urls import reverse_lazy
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm, BidForm
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid
+from notifications.signals import notify
+from django.shortcuts import render
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -663,3 +665,18 @@ class AddPhoneView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('core:my_inventory')  # Redirect to inventory page after adding
+
+# def send_notifictaions(actor, verb, recipient, target, description, **kwargs):
+#     notify.send(actor, recipient, verb, target, description, **kwargs)
+
+@login_required
+def send_notifications(request):
+    message = {}
+    message['recipient'] = request.user  # 消息接收人
+    message['verb'] = "Notification"  # 消息标题
+    message['description'] = "bidding email"  # 详细内容
+    message['target'] = request.user  # 目标对象
+    notify.send(request.user, **message)
+    messages.info(request, "Your deal was successful!")
+    return redirect("/")
+    # return render(request, "home.html")

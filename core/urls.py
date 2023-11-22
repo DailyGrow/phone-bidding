@@ -18,6 +18,8 @@ from .views import (
     make_a_deal,
     DealView,
     send_notifications,
+    NoticeListView,
+    NoticeUpdateView,
 
 )
 
@@ -42,5 +44,7 @@ urlpatterns = [
     path('add-phone/', AddPhoneView.as_view(), name='add_phone'),
     path('make-a-deal/<slug>/', make_a_deal, name='make-a-deal'),
     path('deal/<int:bid_id>/', DealView.as_view(), name='deal'),
-    path('send-notifications',send_notifications,name='send-notifications'),
+    path('send-notifications/<int:bid_id>', send_notifications, name='send-notifications'),
+    path('notice-list/', NoticeListView.as_view(), name='notice-list'),
+    path('notice-update/', NoticeUpdateView.as_view(), name='notice-update'),
 ]

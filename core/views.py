@@ -15,7 +15,7 @@ from django.urls import reverse_lazy
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm, BidForm
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid
 from notifications.signals import notify
-from django.shortcuts import render
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -670,13 +670,51 @@ class AddPhoneView(LoginRequiredMixin, CreateView):
 #     notify.send(actor, recipient, verb, target, description, **kwargs)
 
 @login_required
-def send_notifications(request):
+def send_notifications(request, bid_id):
+    bid = Bid.objects.get(id=bid_id)
+    send_bidder = bid.bidder
     message = {}
-    message['recipient'] = request.user  # 消息接收人
+    message['recipient'] = send_bidder  # 消息接收人
     message['verb'] = "Notification"  # 消息标题
     message['description'] = "bidding email"  # 详细内容
-    message['target'] = request.user  # 目标对象
+    message['target'] = send_bidder  # 目标对象
     notify.send(request.user, **message)
     messages.info(request, "Your deal was successful!")
     return redirect("/")
     # return render(request, "home.html")
+
+
+class NoticeListView(LoginRequiredMixin, ListView):
+    """notice list"""
+
+    context_object_name = 'notices'
+
+    template_name = 'notice_list.html'
+
+
+    # unread notice
+    def get_queryset(self):
+        return self.request.user.notifications.unread()
+
+
+
+
+class NoticeUpdateView(LoginRequiredMixin, View):
+    """update notice"""
+
+    def get(self, request):
+        # unread notice id
+        notice_id = request.GET.get('notice_id')
+        # TODO:update notice
+        if notice_id:
+            request.user.notifications.get(id=notice_id).mark_as_read()
+            return redirect('core:checkout')
+        # update all notice
+        else:
+            request.user.notifications.mark_all_as_read()
+            return redirect('core:checkout')
+
+
+
+
+

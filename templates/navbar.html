@@ -72,6 +72,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link waves-effect" href="{% url 'core:notice-list' %}">
+                        Notice
+                        <span class="badge badge-danger">{{unread_count}}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a
                         class="nav-link waves-effect"
                         href="{% url 'account_logout' %}"
@@ -79,12 +85,6 @@
                         <span class="clearfix d-none d-sm-inline-block">
                             Logout
                         </span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link waves-effect" href="{% url 'core:notice-list' %}">
-                        Notice
-                        <span class="badge badge-danger">{{unread_count}}</span>
                     </a>
                 </li>
                 {% else %}

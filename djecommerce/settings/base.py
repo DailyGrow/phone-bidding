@@ -80,3 +80,12 @@ LOGIN_REDIRECT_URL = '/'
 # CRISPY FORMS
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+#email setting
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = '858519155@qq.com'
+EMIAL_HOST_PASSWORD="vkyqqtsxopytbdbe"

@@ -53,7 +53,7 @@ if os.getenv('GAE_APPLICATION',None):
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'dev',
             'USER': 'root',
-            # 'PASSWORD': '',
+            'PASSWORD': 'y>AV_6fhBD?*RToL',
             'HOST': '/cloudsql/db-group8-401802:us-west1:neu-test-db',
         }
     }
@@ -63,7 +63,7 @@ else:
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'dev',
             'USER': 'root',
-            # 'PASSWORD': '',
+            'PASSWORD': 'y>AV_6fhBD?*RToL',
             'HOST': '35.233.133.184',
             'PORT': '3306'
         }

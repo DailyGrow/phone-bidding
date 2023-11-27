@@ -12,10 +12,18 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, View, UpdateView, DeleteView, CreateView
 from django.urls import reverse_lazy
+from django.http import Http404
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm, BidForm
+<<<<<<< HEAD
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid
 from notifications.signals import notify
 
+=======
+from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid, Message
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+>>>>>>> 84bbf6c (add messages)
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -666,6 +674,7 @@ class AddPhoneView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy('core:my_inventory')  # Redirect to inventory page after adding
 
+<<<<<<< HEAD
 # def send_notifictaions(actor, verb, recipient, target, description, **kwargs):
 #     notify.send(actor, recipient, verb, target, description, **kwargs)
 
@@ -717,4 +726,49 @@ class NoticeUpdateView(LoginRequiredMixin, View):
 
 
 
+=======
+
+@login_required
+def send_message(request, user_id, item_id):
+    if request.method == "POST":
+        if request.user.id == user_id:
+          raise Http404("Cannot message yourself")
+
+        content = request.POST.get('content')
+        item = get_object_or_404(Item, id=item_id)
+        receiver = get_object_or_404(User, id=user_id)
+
+        Message.objects.create(
+            sender=request.user,
+            receiver=receiver,
+            item=item,
+            content=content,
+            sent_time=timezone.now()
+        )
+        return redirect('core:view_messages', user_id=user_id, item_id=item_id)
+
+
+@login_required
+def view_messages(request, user_id, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    
+    if request.user.id == user_id:
+        raise Http404("Cannot message yourself")
+
+    receiver = get_object_or_404(User, id=user_id)
+    messages = Message.objects.filter(
+        item=item,
+        sender__in=[request.user, receiver],
+        receiver__in=[request.user, receiver]
+    ).order_by('sent_time')
+
+    context = {
+        'receiver_id': user_id,
+        'item_id': item_id,
+        'item': item,
+        'chat_messages': messages
+    }
+
+    return render(request, 'view_messages.html', context)
+>>>>>>> 84bbf6c (add messages)
 

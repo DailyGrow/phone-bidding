@@ -1,0 +1,51 @@
+{% extends "base.html" %} {% block content %}
+
+<body class="bg-light">
+  <div class="container py-4">
+    <div class="card">
+      <div class="card-header">
+        <h1>Item Information</h1>
+      </div>
+      <div class="card-body">
+        <p><strong>Name:</strong> {{ item.title }}</p>
+        <p><strong>Description:</strong> {{ item.description }}</p>
+        <p><strong>Item ID:</strong> {{ item.id }}</p>
+        <!-- Add more item attributes as needed -->
+      </div>
+    </div>
+
+    <div class="card my-4">
+      <div class="card-header">
+        <h2>Messages</h2>
+      </div>
+      <div class="card-body">
+        <div class="chat-messages">
+          {% for message in chat_messages %}
+          <div
+            class="{% if message.sender == request.user %}text-right{% else %}text-left{% endif %} mb-2"
+          >
+            <strong>{{ message.sender.username }}:</strong>
+            <div class="message-bubble p-2 d-inline-block text-left">
+              {{ message.content }}
+            </div>
+          </div>
+          {% empty %}
+          <p>No messages yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <form
+      method="post"
+      action="{% url 'core:send_message' receiver_id item_id %}"
+      class="form-group"
+    >
+      {% csrf_token %}
+      <textarea name="content" class="form-control mb-2" required></textarea>
+      <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+  </div>
+</body>
+
+{% endblock content %}

@@ -14,16 +14,13 @@ from django.views.generic import ListView, DetailView, View, UpdateView, DeleteV
 from django.urls import reverse_lazy
 from django.http import Http404
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm, BidForm
-<<<<<<< HEAD
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid
 from notifications.signals import notify
 
-=======
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid, Message
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
->>>>>>> 84bbf6c (add messages)
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -674,7 +671,6 @@ class AddPhoneView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy('core:my_inventory')  # Redirect to inventory page after adding
 
-<<<<<<< HEAD
 # def send_notifictaions(actor, verb, recipient, target, description, **kwargs):
 #     notify.send(actor, recipient, verb, target, description, **kwargs)
 
@@ -726,7 +722,6 @@ class NoticeUpdateView(LoginRequiredMixin, View):
 
 
 
-=======
 
 @login_required
 def send_message(request, user_id, item_id):
@@ -770,5 +765,4 @@ def view_messages(request, user_id, item_id):
     }
 
     return render(request, 'view_messages.html', context)
->>>>>>> 84bbf6c (add messages)
 

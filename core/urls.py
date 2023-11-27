@@ -17,15 +17,11 @@ from .views import (
     AddPhoneView,
     make_a_deal,
     DealView,
-<<<<<<< HEAD
     send_notifications,
     NoticeListView,
     NoticeUpdateView,
-=======
     send_message,
     view_messages,
->>>>>>> 84bbf6c (add messages)
-
 )
 
 app_name = 'core'
@@ -49,12 +45,9 @@ urlpatterns = [
     path('add-phone/', AddPhoneView.as_view(), name='add_phone'),
     path('make-a-deal/<slug>/', make_a_deal, name='make-a-deal'),
     path('deal/<int:bid_id>/', DealView.as_view(), name='deal'),
-<<<<<<< HEAD
     path('send-notifications/<int:bid_id>', send_notifications, name='send-notifications'),
     path('notice-list/', NoticeListView.as_view(), name='notice-list'),
     path('notice-update/', NoticeUpdateView.as_view(), name='notice-update'),
-=======
     path('send-message/<int:user_id>/<int:item_id>/', send_message, name='send_message'),
     path('view-messages/<int:user_id>/<int:item_id>/', view_messages, name='view_messages'),
->>>>>>> 84bbf6c (add messages)
 ]

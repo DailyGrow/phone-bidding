@@ -33,6 +33,8 @@ class UserProfile(models.Model):
     phone = models.CharField(max_length=15, null=True, blank=True)
     stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
     one_click_purchasing = models.BooleanField(default=False)
+    rating_all = models.DecimalField(max_digits=4, decimal_places=1, default=0)
+    rating_num = models.IntegerField(default=0)
 
     def __str__(self):
         return self.user.username

@@ -2,41 +2,41 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Your Order History</h2>
-{% if orders %}
-<table>
-    <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Reference Code</th>
-            <th>Start Date</th>
-            <th>Ordered Date</th>
-            <th>Being Delivered</th>
-            <th>Tracking Number</th>
-            <th>Received</th>
-            <th>Refund Requested</th>
-            <th>Refund Granted</th>
-            <!-- Add more headers as needed -->
-        </tr>
-    </thead>
-    <tbody>
-        {% for order in orders %}
-        <tr>
-            <td>{{ order.id }}</td>
-            <td>{{ order.ref_code }}</td>
-            <td>{{ order.start_date }}</td>
-            <td>{{ order.ordered_date }}</td>
-            <td>{{ order.being_delivered }}</td>
-            <td>{{ order.tracking_number }}</td>
-            <td>{{ order.received }}</td>
-            <td>{{ order.refund_requested }}</td>
-            <td>{{ order.refund_granted }}</td>
-            <!-- Add more cells as needed -->
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>No order history available.</p>
-{% endif %}
+<div class="container mt-5">
+    <h2>Your Order History</h2>
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-bordered mt-3">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Order ID</th>
+                    <th scope="col">Ordered Date</th>
+                    <th scope="col">Being Delivered</th>
+                    <th scope="col">Tracking Number</th>
+                    <th scope="col">Received</th>
+                    <th scope="col">Refund Requested</th>
+                    <th scope="col">Refund Granted</th>
+                    <!-- Add more headers as needed -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.ordered_date }}</td>
+                    <td>{{ order.being_delivered }}</td>
+                    <td>{{ order.tracking_number }}</td>
+                    <td>{{ order.received }}</td>
+                    <td>{{ order.refund_requested }}</td>
+                    <td>{{ order.refund_granted }}</td>
+                    <!-- Add more cells as needed -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>No order history available.</p>
+    {% endif %}
+</div>
 {% endblock %}

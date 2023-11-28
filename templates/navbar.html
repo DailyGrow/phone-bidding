@@ -36,14 +36,18 @@
             <ul class="navbar-nav mr-auto">
                 <!-- Commented out existing links -->
                 <!-- Add a new list item for Order History -->
-                <li class="nav-item">
-                    <a class="nav-link waves-effect" href="{% url 'core:order-history' %}">
-                        Order History
-                    </a>
-                </li>
+
             </ul>
             <ul class="navbar-nav nav-flex-icons">
                 {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" href="{% url 'core:order_history' %}">
+                        <span class="clearfix d-none d-sm-inline-block">
+                            Order History
+                        </span>
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link waves-effect" href="{% url 'core:my_inventory' %}">
                         <span class="clearfix d-none d-sm-inline-block">

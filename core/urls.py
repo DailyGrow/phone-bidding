@@ -47,4 +47,5 @@ urlpatterns = [
     path('send-notifications/<int:bid_id>', send_notifications, name='send-notifications'),
     path('notice-list/', NoticeListView.as_view(), name='notice-list'),
     path('notice-update/', NoticeUpdateView.as_view(), name='notice-update'),
+    path('order_history/', order_history, name='order_history'),
 ]

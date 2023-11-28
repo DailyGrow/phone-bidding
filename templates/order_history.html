@@ -1,0 +1,42 @@
+<!-- order_history.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Your Order History</h2>
+{% if orders %}
+<table>
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Reference Code</th>
+            <th>Start Date</th>
+            <th>Ordered Date</th>
+            <th>Being Delivered</th>
+            <th>Tracking Number</th>
+            <th>Received</th>
+            <th>Refund Requested</th>
+            <th>Refund Granted</th>
+            <!-- Add more headers as needed -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.ref_code }}</td>
+            <td>{{ order.start_date }}</td>
+            <td>{{ order.ordered_date }}</td>
+            <td>{{ order.being_delivered }}</td>
+            <td>{{ order.tracking_number }}</td>
+            <td>{{ order.received }}</td>
+            <td>{{ order.refund_requested }}</td>
+            <td>{{ order.refund_granted }}</td>
+            <!-- Add more cells as needed -->
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No order history available.</p>
+{% endif %}
+{% endblock %}

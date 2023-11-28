@@ -1,0 +1,19 @@
+<!-- chat_rooms.html -->
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Chat Rooms</h2>
+  <div class="list-group">
+    {% for user_id, item_id in chat_rooms %}
+    <a
+      href="{% url 'core:view_messages' user_id=user_id item_id=item_id %}"
+      class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+    >
+      Chat with User {{ user_id }} about Item {{ item_id }}
+      <span class="badge badge-primary badge-pill">Item ID: {{ item_id }}</span>
+    </a>
+    {% empty %}
+    <div class="alert alert-info">No chat rooms available.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

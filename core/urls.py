@@ -22,6 +22,7 @@ from .views import (
     NoticeUpdateView,
     send_message,
     view_messages,
+    chat_rooms,
 )
 
 app_name = 'core'
@@ -48,6 +49,7 @@ urlpatterns = [
     path('send-notifications/<int:bid_id>', send_notifications, name='send-notifications'),
     path('notice-list/', NoticeListView.as_view(), name='notice-list'),
     path('notice-update/', NoticeUpdateView.as_view(), name='notice-update'),
+    path('chat-rooms/', chat_rooms, name='chat_rooms'),
     path('send-message/<int:user_id>/<int:item_id>/', send_message, name='send_message'),
     path('view-messages/<int:user_id>/<int:item_id>/', view_messages, name='view_messages'),
 ]

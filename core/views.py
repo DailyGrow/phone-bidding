@@ -19,6 +19,7 @@ from notifications.signals import notify
 
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid, Message
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -720,7 +721,22 @@ class NoticeUpdateView(LoginRequiredMixin, View):
             return redirect('core:checkout')
 
 
+@login_required
+def chat_rooms(request):
+    # 获取当前登录的用户
+    user = request.user
 
+    # 查询与当前用户相关的所有消息
+    messages = Message.objects.filter(Q(sender=user) | Q(receiver=user)).distinct()
+
+    # 提取所有相关的聊天室（用户ID和商品ID的组合）
+    chat_rooms = set()
+    for message in messages:
+        other_user = message.sender if message.sender != user else message.receiver
+        chat_rooms.add((other_user.id, message.item.id))
+
+    # 渲染模板，并传递聊天室数据
+    return render(request, 'chat_rooms.html', {'chat_rooms': chat_rooms})
 
 
 @login_required

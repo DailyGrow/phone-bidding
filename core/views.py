@@ -711,14 +711,43 @@ class NoticeUpdateView(LoginRequiredMixin, View):
     def get(self, request):
         # unread notice id
         notice_id = request.GET.get('notice_id')
+        order = Order.objects.get(user=self.request.user, ordered=False)
+        form = CheckoutForm()
+        context = {
+            'form': form,
+            'couponform': CouponForm(),
+            'order': order,
+            'DISPLAY_COUPON_FORM': True
+        }
+
+        shipping_address_qs = Address.objects.filter(
+            user=self.request.user,
+            address_type='S',
+            default=True
+        )
+        if shipping_address_qs.exists():
+            context.update(
+                {'default_shipping_address': shipping_address_qs[0]})
+
+        billing_address_qs = Address.objects.filter(
+            user=self.request.user,
+            address_type='B',
+            default=True
+        )
+        if billing_address_qs.exists():
+            context.update(
+                {'default_billing_address': billing_address_qs[0]})
         # TODO:update notice
         if notice_id:
             request.user.notifications.get(id=notice_id).mark_as_read()
-            return redirect('core:checkout')
-        # update all notice
+            #return redirect('core:checkout')
+            return render(self.request, "checkout.html",context)
+            # update all notice
         else:
             request.user.notifications.mark_all_as_read()
-            return redirect('core:checkout')
+            #return redirect('core:checkout')
+            return render(self.request, "checkout.html",context)
+            return render(self.request, "checkout.html",context)
 
 
 @login_required

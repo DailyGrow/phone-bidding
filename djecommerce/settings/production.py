@@ -1,5 +1,5 @@
 from .base import *
-
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DEBUG = config('DEBUG', cast=bool)
 ALLOWED_HOSTS = ['ip-address', 'www.your-website.com']
 

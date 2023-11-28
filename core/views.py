@@ -39,7 +39,7 @@ def is_valid_form(values):
     return valid
 
 def order_history(request):
-    orders = Order.objects.filter(user=request.user, ordered=True)
+    orders = Order.objects.filter(user=self.request.user)
     return render(request, 'order_history.html', {'orders': orders})
     
 class CheckoutView(View):

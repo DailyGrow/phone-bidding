@@ -1,0 +1,23 @@
+<!-- chat_rooms.html -->
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">Weekly Sales Report</h2>
+  {% for report in weekly_reports %}
+  <div class="card mb-3">
+    <div class="card-header">
+      Week: {{ report.start_date|date:"M d, Y" }} to {{ report.end_date|date:"Md, Y" }}
+    </div>
+    <div class="card-body">
+      <p class="card-text">
+        <strong>Total Sales:</strong> {{ report.total_sales }}
+      </p>
+      <p class="card-text">
+        <strong>Total Items Sold:</strong> {{ report.total_items_sold }}
+      </p>
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-center">No sales data available.</p>
+  {% endfor %}
+</div>
+{% endblock %}

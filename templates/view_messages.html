@@ -2,9 +2,9 @@
 
 <body class="bg-light">
   <div class="container py-4">
-    <div class="card">
-      <div class="card-header">
-        <h1>Item Information</h1>
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h3 class="m-0">Item Information</h3>
       </div>
       <div class="card-body">
         <p><strong>Name:</strong> {{ item.title }}</p>
@@ -14,23 +14,30 @@
       </div>
     </div>
 
-    <div class="card my-4">
-      <div class="card-header">
-        <h2>Messages</h2>
+    <div class="card my-4 shadow-sm">
+      <div class="card-header bg-secondary text-white">
+        <h3 class="m-0">Messages</h3>
       </div>
       <div class="card-body">
         <div class="chat-messages">
           {% for message in chat_messages %}
           <div
-            class="{% if message.sender == request.user %}text-right{% else %}text-left{% endif %} mb-2"
+            class="{% if message.sender == request.user %}text-right{% else %}text-left{% endif %} mb-3"
           >
-            <strong>{{ message.sender.username }}:</strong>
-            <div class="message-bubble p-2 d-inline-block text-left">
+            <div>
+              <strong>{{ message.sender.username }}</strong>
+              <small class="text-muted ml-2"
+                >{{ message.sent_time|date:"M d, Y H:i" }}</small
+              >
+            </div>
+            <div
+              class="message-bubble p-2 d-inline-block text-left bg-light rounded"
+            >
               {{ message.content }}
             </div>
           </div>
           {% empty %}
-          <p>No messages yet.</p>
+          <p class="text-center text-muted">No messages yet.</p>
           {% endfor %}
         </div>
       </div>
@@ -42,7 +49,12 @@
       class="form-group"
     >
       {% csrf_token %}
-      <textarea name="content" class="form-control mb-2" required></textarea>
+      <textarea
+        name="content"
+        class="form-control mb-2"
+        placeholder="Write your message here..."
+        required
+      ></textarea>
       <button type="submit" class="btn btn-primary">Send</button>
     </form>
   </div>

@@ -8,20 +8,20 @@
 {% block content %}
 <div class="container">
     <div class="row mt-4 ml-4">
-        <a href="{% url 'core:notice-update' %}" class="btn btn-warning" role="button">Clear all notice</a>
+        <a href="{% url 'core:notice-list' %}" class="btn btn-warning" role="button">Clear all notice</a>
     </div>
     <!-- unread notice -->
     <div class="row mt-2 ml-4">
         <ul class="list-group">
             {% for notice in notices %}
                 <li class="list-group-item" id="notice_link">
-                    <a href="{% url 'core:notice-update' %}?user_id={{ notice.target.id }}&notice_id={{ notice.id }}#comment_elem_{{ notice.action_object.id }}"
+                    <a href="{% url 'core:notice-update' notice.verb %}"
                        target="_blank"
                     >
                     <span style="color: #5897fb;">
                         {{ notice.actor }}
                     </span>
-                        on <span style="color: #01a252;">{{ notice.target }}</span> {{ notice.verb }}
+                        on <span style="color: #01a252;">{{ notice.target }}</span> deal {{ notice.verb }}
                     </a>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ notice.timestamp|date:"Y/m/d H:i" }}
                 </li>

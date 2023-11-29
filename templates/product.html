@@ -58,7 +58,47 @@
                         Go to bid
                         <i class="fas fa-shopping-cart ml-1"></i>
                     </a>
-
+                    <a
+                        href="{% url 'core:view_messages' object.seller.id object.id %}"
+                        class="btn btn-secondary btn-md my-0 p"
+                    >
+                        Contact seller
+                        <i class="fas fa-comment-dots ml-1"></i>
+                    </a>
+                    <a
+                        href="{% url 'core:profile_update' object.seller.id %}"
+                        class="btn btn-info btn-md my-0 p"
+                    >
+                        Seller Profile
+                        <i class="fas fa-user ml-1"></i>
+                    </a>
+                    <!-- Add Rating Form -->
+                    <form
+                        method="post"
+                        action="{% url 'core:rate_seller' seller_id=object.seller.id %}"
+                    >
+                        {% csrf_token %}
+                        <input
+                            type="hidden"
+                            name="item_id"
+                            value="{{ object.id }}"
+                        />
+                        <div class="form-group">
+                            <label for="rating">Rate Seller (1-5):</label>
+                            <input
+                                type="number"
+                                id="rating"
+                                name="rating"
+                                min="1"
+                                max="5"
+                                class="form-control"
+                                style="width: auto"
+                            />
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            Submit Rating
+                        </button>
+                    </form>
                     {% else %}
                     <a
                         href="{% url 'core:edit_product' object.slug %}"
@@ -74,12 +114,20 @@
                         Delete
                         <i class="fas fa-trash-alt ml-1"></i>
                     </a>
+                    <!-- <a
+            href="{{ object.get_deal_url }}"
+            class="btn btn-primary btn-md my-0 p"
+          >
+            Deal
+            <i class="fas fa-shopping-cart ml-1"></i>
+          </a> -->
+                    {% endif %} {% if request.user.id != 1 %}
                     <a
-                        href="{{ object.get_deal_url }}"
-                        class="btn btn-primary btn-md my-0 p"
+                        href="{% url 'core:view_messages' 1 object.id %}"
+                        class="btn btn-info btn-md my-0 p"
                     >
-                        Deal
-                        <i class="fas fa-shopping-cart ml-1"></i>
+                        Contact admin
+                        <i class="fas fa-comment-dots ml-1"></i>
                     </a>
                     {% endif %}
                 </div>

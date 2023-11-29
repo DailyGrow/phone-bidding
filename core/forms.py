@@ -5,7 +5,8 @@ from django.core.exceptions import ValidationError
 
 PAYMENT_CHOICES = (
     ('S', 'Stripe'),
-    ('P', 'PayPal')
+    ('P', 'PayPal'),
+    ('O','Offline')
 )
 
 

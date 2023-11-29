@@ -1,0 +1,98 @@
+{% extends 'base.html' %} {% load mathfilters %} {% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">User Profile</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ profile.user.username }}</h5>
+
+            {% if request.user == profile.user %}
+            <!-- Form for editing profile -->
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        class="form-control"
+                        value="{{ profile.address }}"
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input
+                        type="text"
+                        id="phone"
+                        name="phone"
+                        class="form-control"
+                        value="{{ profile.phone }}"
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label for="stripe_customer_id">Stripe Customer ID:</label>
+                    <input
+                        type="text"
+                        id="stripe_customer_id"
+                        name="stripe_customer_id"
+                        class="form-control"
+                        value="{{ profile.stripe_customer_id }}"
+                    />
+                </div>
+
+                <div class="form-group form-check">
+                    <input
+                        type="checkbox"
+                        id="one_click_purchasing"
+                        name="one_click_purchasing"
+                        class="form-check-input"
+                        {%
+                        if
+                        profile.one_click_purchasing
+                        %}
+                        checked
+                        {%
+                        endif
+                        %}
+                    />
+                    <label class="form-check-label" for="one_click_purchasing"
+                        >One Click Purchasing</label
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Update Profile
+                </button>
+            </form>
+            {% else %}
+            <!-- Display non-editable information for other users -->
+            <p class="card-text">
+                <strong>Address:</strong> {{ profile.address }}
+            </p>
+            <p class="card-text"><strong>Phone:</strong> {{ profile.phone }}</p>
+            <p class="card-text">
+                <strong>Stripe Customer ID:</strong>
+                {{profile.stripe_customer_id }}
+            </p>
+            <p class="card-text">
+                <strong>One Click Purchasing:</strong>
+                {{profile.one_click_purchasing|yesno:"Enabled,Disabled" }}
+            </p>
+            {% endif %}
+
+            <!-- Calculate and display the rating -->
+            {% if profile.rating_num %}
+            <p class="card-text">
+                <strong>Rating:</strong>
+                {{profile.rating_all|floatformat:2|div:profile.rating_num|floatformat:2}}
+            </p>
+            {% else %}
+            <p class="card-text"><strong>Rating:</strong> No ratings yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.urls import path
+
 # from .views import (
 #     ItemDetailView,
 #     CheckoutView,
@@ -25,6 +26,7 @@ from django.urls import path
 #     chat_rooms,
 # )
 from .views import *
+
 app_name = 'core'
 
 urlpatterns = [
@@ -48,10 +50,11 @@ urlpatterns = [
     path('deal/<int:bid_id>/', DealView.as_view(), name='deal'),
     path('send-notifications/<int:bid_id>', send_notifications, name='send-notifications'),
     path('notice-list/', NoticeListView.as_view(), name='notice-list'),
-    path('notice-update/', NoticeUpdateView.as_view(), name='notice-update'),
+    path('notice-update/<notice_verb>/', NoticeUpdateView.as_view(), name='notice-update'),
     path('chat-rooms/', chat_rooms, name='chat_rooms'),
     path('send-message/<int:user_id>/<int:item_id>/', send_message, name='send_message'),
     path('view-messages/<int:user_id>/<int:item_id>/', view_messages, name='view_messages'),
+    path('get-checkout/<notice_verb>', get_checkout, name='get-checkout')
     path('profile/update/<int:pk>/', UserProfileUpdateView.as_view(), name='profile_update'),
     path('rate-seller/<int:seller_id>/', rate_seller, name='rate_seller'),
 ]

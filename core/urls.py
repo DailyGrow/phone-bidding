@@ -33,4 +33,5 @@ urlpatterns = [
     path('rate-seller/<int:seller_id>/', rate_seller, name='rate_seller'),
     path('order_history/', order_history, name='order_history'),
     path('sales-report/', WeeklySalesReportView.as_view(), name='sales_report'),
+
 ]

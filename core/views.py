@@ -435,10 +435,10 @@ def add_to_cart(request, slug):
             messages.info(request, "This item was added to your cart.")
             return redirect("core:order-summary")
     else:
-        ordered_date = timezone.now()
-        order = Order.objects.create(
-            user=request.user, ordered_date=ordered_date)
-        order.items.add(order_item)
+        # ordered_date = timezone.now()
+        # order = Order.objects.create(
+        #     user=request.user, ordered_date=ordered_date)
+        # order.items.add(order_item)
         messages.info(request, "This item was added to your cart.")
         return redirect("core:order-summary")
 
@@ -681,13 +681,12 @@ def send_notifications(request, bid_id):
     send_bidder = bid.bidder
     message = {}
     message['recipient'] = send_bidder  # 消息接收人
-    message['verb'] = "Notification"  # 消息标题
+    message['verb'] = bid_id  # 消息标题
     message['description'] = "bidding email"  # 详细内容
     message['target'] = send_bidder  # 目标对象
     notify.send(request.user, **message)
     messages.info(request, "Your deal was successful!")
     return redirect("/")
-    # return render(request, "home.html")
 
 
 class NoticeListView(LoginRequiredMixin, ListView):
@@ -703,17 +702,63 @@ class NoticeListView(LoginRequiredMixin, ListView):
         return self.request.user.notifications.unread()
 
 
+@login_required
+def get_checkout(request, bid_id):
+    try:
 
+        print(bid_id)
+        # bid = Bid.objects.get(id=verb)
+        ordered_date = timezone.now()
+        order = Order.objects.create(
+            user=self.request.user, ordered_date=ordered_date)
+        # order.items.add(order_item)
+        form = CheckoutForm()
+        context = {
+            'form': form,
+            'couponform': CouponForm(),
+            'order': order,
+            'DISPLAY_COUPON_FORM': True
+        }
+
+        shipping_address_qs = Address.objects.filter(
+            user=self.request.user,
+            address_type='S',
+            default=True
+        )
+        if shipping_address_qs.exists():
+            context.update(
+                {'default_shipping_address': shipping_address_qs[0]})
+
+        billing_address_qs = Address.objects.filter(
+            user=self.request.user,
+            address_type='B',
+            default=True
+        )
+        if billing_address_qs.exists():
+            context.update(
+                {'default_billing_address': billing_address_qs[0]})
+        return render(self.request, "checkout.html", context)
+    except ObjectDoesNotExist:
+        messages.info(self.request, "You do not have an active order")
+        # return redirect("core:notice-update")
+        return redirect("/")
 
 class NoticeUpdateView(LoginRequiredMixin, View):
     """update notice"""
-    def get(self, *args, **kwargs):
+    def get(self, request, **kwargs):
         try:
+            verb = kwargs.get('notice_verb')
+            print(verb)
+            bid = Bid.objects.get(id=verb)
+            order_item, created = OrderItem.objects.get_or_create(
+                item=bid.item,
+                user=request.user,
+                ordered=False
+            )
             ordered_date = timezone.now()
             order = Order.objects.create(
                 user=self.request.user, ordered_date=ordered_date)
-            # order.items.add(order_item)
-            # order = Order.objects.get(user=self.request.user, ordered=False)
+            order.items.add(order_item)
             form = CheckoutForm()
             context = {
                 'form': form,
@@ -742,12 +787,14 @@ class NoticeUpdateView(LoginRequiredMixin, View):
             return render(self.request, "checkout.html", context)
         except ObjectDoesNotExist:
             messages.info(self.request, "You do not have an active order")
-            # return redirect("core:checkout")
+            # return redirect("core:notice-update")
             return redirect("/")
 
-    def post(self, *args, **kwargs):
+
+    def post(self,request, **kwargs):
         form = CheckoutForm(self.request.POST or None)
         try:
+
             order = Order.objects.get(user=self.request.user, ordered=False)
             if form.is_valid():
 
@@ -881,46 +928,6 @@ class NoticeUpdateView(LoginRequiredMixin, View):
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
             return redirect("core:order-summary")
-
-    # def get(self, request):
-    #     # unread notice id
-    #     notice_id = request.GET.get('notice_id')
-    #     # order = Order.objects.get(user=self.request.user, ordered=False)
-    #     # form = CheckoutForm()
-    #     # context = {
-    #     #     'form': form,
-    #     #     'couponform': CouponForm(),
-    #     #     'order': order,
-    #     #     'DISPLAY_COUPON_FORM': False
-    #     # }
-    #     #
-    #     # shipping_address_qs = Address.objects.filter(
-    #     #     user=self.request.user,
-    #     #     address_type='S',
-    #     #     default=True
-    #     # )
-    #     # if shipping_address_qs.exists():
-    #     #     context.update(
-    #     #         {'default_shipping_address': shipping_address_qs[0]})
-    #     #
-    #     # billing_address_qs = Address.objects.filter(
-    #     #     user=self.request.user,
-    #     #     address_type='B',
-    #     #     default=True
-    #     # )
-    #     # if billing_address_qs.exists():
-    #     #     context.update(
-    #     #         {'default_billing_address': billing_address_qs[0]})
-    #     # TODO:update notice
-    #     if notice_id:
-    #         request.user.notifications.get(id=notice_id).mark_as_read()
-    #         #return redirect('core:checkout')
-    #         return render(self.request, "checkout.html")
-    #         # update all notice
-    #     else:
-    #         request.user.notifications.mark_all_as_read()
-    #         #return redirect('core:checkout')
-    #         return render(self.request, "checkout.html")
 
 
 @login_required

@@ -1102,7 +1102,7 @@ def rate_seller(request, seller_id):
 class WeeklySalesReportView(View):
     def get(self, request, *args, **kwargs):
         end_date = timezone.now()
-        start_date = Order.objects.earliest('ordered_date').ordered_date
+        start_date = Order.objects.earliest('start_date').start_date
 
         weekly_reports = []
 

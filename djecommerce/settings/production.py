@@ -48,5 +48,6 @@ else:
     }
 # [END_DB_SETUP]
 
-STRIPE_PUBLIC_KEY = config('STRIPE_LIVE_PUBLIC_KEY')
-STRIPE_SECRET_KEY = config('STRIPE_LIVE_SECRET_KEY')
+stripe_live_mode = False
+STRIPE_PUBLIC_KEY = config('STRIPE_LIVE_PUBLIC_KEY', default=None)
+STRIPE_SECRET_KEY = config('STRIPE_LIVE_SECRET_KEY', default=None)

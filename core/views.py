@@ -991,3 +991,47 @@ def view_messages(request, user_id, item_id):
 
     return render(request, 'view_messages.html', context)
 
+class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = UserProfile
+    fields = ['address', 'phone', 'stripe_customer_id', 'one_click_purchasing']  # specify the fields you want to be editable
+    template_name = 'user_profile.html'
+    context_object_name = 'profile'
+
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get('pk')
+        if pk:
+            return get_object_or_404(UserProfile, pk=pk)
+        return UserProfile.objects.get(user=self.request.user)
+
+    def get_success_url(self):
+        pk = self.kwargs.get('pk')
+        if pk:
+            return reverse_lazy('core:profile_update', kwargs={'pk': pk})
+        return reverse_lazy('core:profile_update', kwargs={'pk': self.request.user.pk})
+
+    def form_valid(self, form):
+
+        # Additional logic (if needed) when form is valid
+        return super().form_valid(form)
+    
+@login_required
+def rate_seller(request, seller_id):
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        item_id = request.POST.get('item_id')
+        
+        # Get seller's UserProfile
+        seller = get_object_or_404(UserProfile, user__id=seller_id)
+        
+        # Update seller's rating
+        if rating:
+            seller.rating_num += 1
+            seller.rating_all += int(rating)
+            seller.save()
+            messages.success(request, "Thank you for rating!")
+
+        # Redirect to item page or another appropriate page
+        return redirect('core:product', slug=Item.objects.get(id=item_id).slug)
+
+    # Redirect if not a POST request
+    return redirect('core:home')

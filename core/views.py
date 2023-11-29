@@ -247,6 +247,7 @@ class PaymentView(View):
         form = PaymentForm(self.request.POST)
         userprofile = UserProfile.objects.get(user=self.request.user)
         if form.is_valid():
+            print("form is valid")
             token = form.cleaned_data.get('stripeToken')
             save = form.cleaned_data.get('save')
             use_default = form.cleaned_data.get('use_default')
@@ -752,11 +753,13 @@ class NoticeUpdateView(LoginRequiredMixin, View):
             order_item, created = OrderItem.objects.get_or_create(
                 item=bid.item,
                 user=request.user,
-                ordered=False
+                ordered=False,
+                price=bid.amount
             )
             ordered_date = timezone.now()
-            order = Order.objects.create(
-                user=self.request.user, ordered_date=ordered_date)
+            order, created = Order.objects.get_or_create(
+                user=self.request.user, ordered=False)
+            order.ordered_date=ordered_date
             order.items.add(order_item)
             form = CheckoutForm()
             context = {
@@ -800,7 +803,7 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                 use_default_shipping = form.cleaned_data.get(
                     'use_default_shipping')
                 if use_default_shipping:
-                    print("Using the defualt shipping address")
+                    print("Using the default shipping address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
                         address_type='S',
@@ -814,7 +817,7 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                         messages.info(
                             self.request, "No default shipping address available")
                         # return redirect('core:checkout')
-                        return redirect("/")
+                        return redirect("core:notice-update")
                 else:
                     print("User is entering a new shipping address")
                     shipping_address1 = form.cleaned_data.get(
@@ -919,11 +922,24 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                     return redirect('core:payment', payment_option='stripe')
                 elif payment_option == 'P':
                     return redirect('core:payment', payment_option='paypal')
+                elif payment_option == 'O':
+                    order_items = order.items.all()
+                    order_items.update(ordered=True)
+                    for item in order_items:
+                        item.save()
+
+                    order.ordered = True
+                    # order.payment = payment
+                    order.ref_code = create_ref_code()
+                    order.save()
+                    messages.info(
+                        self.request, "You can contact with seller to pay offline")
+                    return redirect("core:notice-update")
                 else:
                     messages.warning(
                         self.request, "Invalid payment option selected")
                     # return redirect('core:checkout')
-                    return redirect("/")
+                    return redirect("core:notice-update")
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
             return redirect("core:order-summary")

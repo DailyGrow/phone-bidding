@@ -87,7 +87,7 @@ class CheckoutView(View):
                 use_default_shipping = form.cleaned_data.get(
                     'use_default_shipping')
                 if use_default_shipping:
-                    print("Using the defualt shipping address")
+                    print("Using the default shipping address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
                         address_type='S',
@@ -150,7 +150,7 @@ class CheckoutView(View):
                     order.save()
 
                 elif use_default_billing:
-                    print("Using the defualt billing address")
+                    print("Using the default billing address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
                         address_type='B',
@@ -748,7 +748,6 @@ class NoticeUpdateView(LoginRequiredMixin, View):
     def get(self, request, **kwargs):
         try:
             verb = kwargs.get('notice_verb')
-            print(verb)
             bid = Bid.objects.get(id=verb)
             order_item, created = OrderItem.objects.get_or_create(
                 item=bid.item,

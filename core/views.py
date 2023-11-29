@@ -230,10 +230,23 @@ class CheckoutView(View):
                     return redirect('core:payment', payment_option='stripe')
                 elif payment_option == 'P':
                     return redirect('core:payment', payment_option='paypal')
+                elif payment_option == 'O':
+                    order_items = order.items.all()
+                    order_items.update(ordered=True)
+                    for item in order_items:
+                        item.save()
+
+                    order.ordered = True
+                    # order.payment = payment
+                    order.ref_code = create_ref_code()
+                    order.save()
+                    messages.info(
+                        self.request, "You can contact with seller to pay offline")
+                    return redirect("/")
                 else:
                     messages.warning(
                         self.request, "Invalid payment option selected")
-                    return redirect('core:checkout')
+                    return redirect('/')
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
             return redirect("core:order-summary")
@@ -901,7 +914,7 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                     order.save()
 
                 elif use_default_billing:
-                    print("Using the defualt billing address")
+                    print("Using the default billing address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
                         address_type='B',
@@ -968,12 +981,12 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                     order.save()
                     messages.info(
                         self.request, "You can contact with seller to pay offline")
-                    return redirect("core:notice-update")
+                    return redirect("/")
                 else:
                     messages.warning(
                         self.request, "Invalid payment option selected")
                     # return redirect('core:checkout')
-                    return redirect("core:notice-update")
+                    return redirect("/")
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
             return redirect("core:order-summary")

@@ -1,30 +1,4 @@
 from django.urls import path
-
-# from .views import (
-#     ItemDetailView,
-#     CheckoutView,
-#     HomeView,
-#     OrderSummaryView,
-#     add_to_cart,
-#     remove_from_cart,
-#     remove_single_item_from_cart,
-#     PaymentView,
-#     AddCouponView,
-#     RequestRefundView,
-#     BidView,
-#     InventoryView,
-#     ProductEditView, 
-#     ProductDeleteView,
-#     AddPhoneView,
-#     make_a_deal,
-#     DealView,
-#     send_notifications,
-#     NoticeListView,
-#     NoticeUpdateView,
-#     send_message,
-#     view_messages,
-#     chat_rooms,
-# )
 from .views import *
 
 app_name = 'core'
@@ -57,4 +31,5 @@ urlpatterns = [
     path('get-checkout/<notice_verb>', get_checkout, name='get-checkout'),
     path('profile/update/<int:pk>/', UserProfileUpdateView.as_view(), name='profile_update'),
     path('rate-seller/<int:seller_id>/', rate_seller, name='rate_seller'),
+    path('order_history/', order_history, name='order_history'),
 ]

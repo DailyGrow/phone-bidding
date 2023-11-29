@@ -77,6 +77,13 @@ notifications_unread as unread_count %}
                         <span class="clearfix d-none d-sm-inline-block">Messages</span>
                     </a>
                 </li>
+                {% if user.is_staff %}
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" href="{% url 'core:sales_report' %}">
+                        <span class="clearfix d-none d-sm-inline-block">Sales report</span>
+                    </a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link waves-effect" href="{% url 'core:profile_update' request.user.userprofile.id %}">
                         <span class="clearfix d-none d-sm-inline-block">Profile</span>
@@ -92,10 +99,6 @@ notifications_unread as unread_count %}
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a
-                        class="nav-link waves-effect"
-                        href="{% url 'account_logout' %}"
-                    >
                     <a class="nav-link waves-effect" href="{% url 'account_logout' %}">
                         <span class="clearfix d-none d-sm-inline-block">
                             Logout

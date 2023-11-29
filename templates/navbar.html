@@ -1,9 +1,7 @@
 {% load cart_template_tags %} {% load notifications_tags %}
 {% notifications_unread as unread_count %}
 
-<nav
-    class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar"
->
+<nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
     <div class="container">
         <!-- Brand -->
         <a class="navbar-brand waves-effect" href="/">
@@ -11,15 +9,8 @@
         </a>
 
         <!-- Collapse -->
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-        >
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -29,27 +20,35 @@
             <ul class="navbar-nav mr-auto">
                 {% comment %}
                 <li class="nav-item active">
-                    <a class="nav-link waves-effect" href="/"
-                        >Home
+                    <a class="nav-link waves-effect" href="/">Home
                         <span class="sr-only">(current)</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link waves-effect" href="/checkout">
-                        Checkout</a
-                    >
+                        Checkout</a>
                 </li>
                 {% endcomment %}
             </ul>
 
             <!-- Right -->
+            <ul class="navbar-nav mr-auto">
+                <!-- Commented out existing links -->
+                <!-- Add a new list item for Order History -->
+
+            </ul>
             <ul class="navbar-nav nav-flex-icons">
                 {% if request.user.is_authenticated %}
                 <li class="nav-item">
-                    <a
-                        class="nav-link waves-effect"
-                        href="{% url 'core:my_inventory' %}"
-                    >
+                    <a class="nav-link waves-effect" href="{% url 'core:order_history' %}">
+                        <span class="clearfix d-none d-sm-inline-block">
+                            Order History
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" href="{% url 'core:my_inventory' %}">
                         <span class="clearfix d-none d-sm-inline-block">
                             My Inventory
                         </span>
@@ -57,10 +56,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a
-                        href="{% url 'core:order-summary' %}"
-                        class="nav-link waves-effect"
-                    >
+                    <a href="{% url 'core:order-summary' %}" class="nav-link waves-effect">
                         <span class="badge red z-depth-1 mr-1">
                             {{ request.user|cart_item_count }}
                         </span>
@@ -71,39 +67,23 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a
-                        class="nav-link waves-effect"
-                        href="{% url 'core:notice-list' %}"
-                    >
+                    <a class="nav-link waves-effect" href="{% url 'core:notice-list' %}">
                         Notice
                         <span class="badge badge-danger">{{unread_count}}</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a
-                        class="nav-link waves-effect"
-                        href="{% url 'core:chat_rooms' %}"
-                    >
-                        <span class="clearfix d-none d-sm-inline-block"
-                            >Messages</span
-                        >
+                    <a class="nav-link waves-effect" href="{% url 'core:chat_rooms' %}">
+                        <span class="clearfix d-none d-sm-inline-block">Messages</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a
-                        class="nav-link waves-effect"
-                        href="{% url 'core:profile_update' request.user.userprofile.id %}"
-                    >
-                        <span class="clearfix d-none d-sm-inline-block"
-                            >Profile</span
-                        >
+                    <a class="nav-link waves-effect" href="{% url 'core:profile_update' request.user.userprofile.id %}">
+                        <span class="clearfix d-none d-sm-inline-block">Profile</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a
-                        class="nav-link waves-effect"
-                        href="{% url 'account_logout' %}"
-                    >
+                    <a class="nav-link waves-effect" href="{% url 'account_logout' %}">
                         <span class="clearfix d-none d-sm-inline-block">
                             Logout
                         </span>
@@ -111,20 +91,14 @@
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a
-                        class="nav-link waves-effect"
-                        href="{% url 'account_login' %}"
-                    >
+                    <a class="nav-link waves-effect" href="{% url 'account_login' %}">
                         <span class="clearfix d-none d-sm-inline-block">
                             Login
                         </span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a
-                        class="nav-link waves-effect"
-                        href="{% url 'account_signup' %}"
-                    >
+                    <a class="nav-link waves-effect" href="{% url 'account_signup' %}">
                         <span class="clearfix d-none d-sm-inline-block">
                             Signup
                         </span>

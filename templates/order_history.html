@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Your Order History</h2>
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-bordered mt-3">
+            <thead class="thead-dark">
+                <tr>
+
+                    <th scope="col">Item</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Subtotal</th>
+                    <th scope="col">Ordered Date</th>
+                    <th scope="col">Being Delivered</th>
+                    <th scope="col">Tracking Number</th>
+                    <th scope="col">Received</th>
+                    <th scope="col">Refund Requested</th>
+                    <th scope="col">Refund Granted</th>
+                    <!-- Add more headers as needed -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+
+                    <td>{{ order.order_item.item.title }}</td>
+                    <td>{{ order.order_item.quantity }}</td>
+                    <td>{{ order.order_item.price }}</td>
+                    <td>{{ order.order_item.subtotal }}</td>
+                    <td>{{ order.order.ordered_date }}</td>
+                    <td>{{ order.order.being_delivered }}</td>
+                    <td>{{ order.order.tracking_number }}</td>
+                    <td>{{ order.order.received }}</td>
+                    <td>{{ order.order.refund_requested }}</td>
+                    <td>{{ order.order.refund_granted }}</td>
+                    <!-- Add more cells as needed -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>No order history available.</p>
+    {% endif %}
+</div>
+{% endblock %}

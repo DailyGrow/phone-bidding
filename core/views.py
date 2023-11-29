@@ -44,6 +44,29 @@ def is_valid_form(values):
             valid = False
     return valid
 
+def order_history(request):
+    orders = Order.objects.filter(user=request.user)
+
+    # Retrieve item information for each order
+    order_items_with_details = []
+    for order in orders:
+        order_item = OrderItem.objects.get(order=order)
+
+        item_details = {
+            'item': order_item.item,
+            'quantity': order_item.quantity,
+            'price': order_item.get_final_price(),  # You might need to adjust this based on your model
+            'subtotal': order_item.get_final_price() * order_item.quantity,  # Adjust as needed
+        }
+
+        order_items_with_details.append({
+            'order': order,
+            'order_item': item_details,
+            'total': order.get_total(),  # Adjust as needed
+        })
+
+    return render(request, 'order_history.html', {'orders': order_items_with_details})
+    
 class CheckoutView(View):
     def get(self, *args, **kwargs):
         try:

@@ -742,46 +742,6 @@ class NoticeListView(LoginRequiredMixin, ListView):
         return self.request.user.notifications.unread()
 
 
-@login_required
-def get_checkout(request, bid_id):
-    try:
-
-        print(bid_id)
-        # bid = Bid.objects.get(id=verb)
-        ordered_date = timezone.now()
-        order = Order.objects.create(
-            user=self.request.user, ordered_date=ordered_date)
-        # order.items.add(order_item)
-        form = CheckoutForm()
-        context = {
-            'form': form,
-            'couponform': CouponForm(),
-            'order': order,
-            'DISPLAY_COUPON_FORM': True
-        }
-
-        shipping_address_qs = Address.objects.filter(
-            user=self.request.user,
-            address_type='S',
-            default=True
-        )
-        if shipping_address_qs.exists():
-            context.update(
-                {'default_shipping_address': shipping_address_qs[0]})
-
-        billing_address_qs = Address.objects.filter(
-            user=self.request.user,
-            address_type='B',
-            default=True
-        )
-        if billing_address_qs.exists():
-            context.update(
-                {'default_billing_address': billing_address_qs[0]})
-        return render(self.request, "checkout.html", context)
-    except ObjectDoesNotExist:
-        messages.info(self.request, "You do not have an active order")
-        # return redirect("core:notice-update")
-        return redirect("/")
 
 class NoticeUpdateView(LoginRequiredMixin, View):
     """update notice"""
@@ -799,8 +759,10 @@ class NoticeUpdateView(LoginRequiredMixin, View):
             print(ordered_date)
             order, created = Order.objects.get_or_create(
                 user=self.request.user, ordered=False)
-            order.ordered_date=ordered_date
+
+            order.ordered_date = ordered_date
             order.items.add(order_item)
+            order.save()
             notice_id = request.GET.get('notice_id')
 
             if notice_id:

@@ -31,5 +31,9 @@ urlpatterns = [
     path('get-checkout/<notice_verb>', get_checkout, name='get-checkout'),
     path('profile/update/<int:pk>/', UserProfileUpdateView.as_view(), name='profile_update'),
     path('rate-seller/<int:seller_id>/', rate_seller, name='rate_seller'),
+<<<<<<< HEAD
     path('order_history/', order_history, name='order_history'),
+=======
+    path('sales-report/', WeeklySalesReportView.as_view(), name='sales_report'),
+>>>>>>> 6028c2e (added sales report)
 ]

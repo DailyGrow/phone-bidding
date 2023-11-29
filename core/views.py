@@ -6,10 +6,12 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView, View, UpdateView, DeleteView, CreateView
 from django.urls import reverse_lazy
 from django.http import Http404
@@ -19,7 +21,8 @@ from notifications.signals import notify
 
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid, Message
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import Q, Sum, Count
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -1081,3 +1084,32 @@ def rate_seller(request, seller_id):
 
     # Redirect if not a POST request
     return redirect('core:home')
+
+@method_decorator(staff_member_required, name='dispatch')
+class WeeklySalesReportView(View):
+    def get(self, request, *args, **kwargs):
+        end_date = timezone.now()
+        start_date = Order.objects.earliest('ordered_date').ordered_date
+
+        weekly_reports = []
+
+        while start_date < end_date:
+            next_week = start_date + timedelta(days=7)
+            orders = Order.objects.filter(
+                ordered_date__range=[start_date, next_week], ordered=True
+            )
+
+            total_sales = sum(order.get_total() for order in orders)
+            total_items_sold = OrderItem.objects.filter(order__in=orders).aggregate(Sum('quantity'))['quantity__sum'] or 0
+
+            weekly_reports.append({
+                'start_date': start_date,
+                'end_date': next_week,
+                'total_sales': total_sales,
+                'total_items_sold': total_items_sold
+            })
+
+            start_date = next_week
+
+        context = {'weekly_reports': weekly_reports}
+        return render(request, 'sales_report.html', context)

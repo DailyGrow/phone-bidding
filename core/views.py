@@ -780,6 +780,7 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                 price=bid.amount
             )
             ordered_date = timezone.now()
+            print(ordered_date)
             order, created = Order.objects.get_or_create(
                 user=self.request.user, ordered=False)
             order.ordered_date=ordered_date

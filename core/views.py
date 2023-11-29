@@ -761,6 +761,13 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                 user=self.request.user, ordered=False)
             order.ordered_date=ordered_date
             order.items.add(order_item)
+            notice_id = request.GET.get('notice_id')
+
+            if notice_id:
+                request.user.notifications.get(id=notice_id).mark_as_read()
+            else:
+                request.user.notifications.mark_all_as_read()
+                
             form = CheckoutForm()
             context = {
                 'form': form,

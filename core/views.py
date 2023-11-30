@@ -8,12 +8,10 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView, View, UpdateView, DeleteView, CreateView
 from django.urls import reverse_lazy
 from django.http import Http404
@@ -23,8 +21,7 @@ from notifications.signals import notify
 
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid, Message
 from django.contrib.auth import get_user_model
-from django.db.models import Q, Sum, Count
-from datetime import timedelta
+from django.db.models import Q
 
 
 User = get_user_model()
@@ -234,23 +231,10 @@ class CheckoutView(View):
                     return redirect('core:payment', payment_option='stripe')
                 elif payment_option == 'P':
                     return redirect('core:payment', payment_option='paypal')
-                elif payment_option == 'O':
-                    order_items = order.items.all()
-                    order_items.update(ordered=True)
-                    for item in order_items:
-                        item.save()
-
-                    order.ordered = True
-                    # order.payment = payment
-                    order.ref_code = create_ref_code()
-                    order.save()
-                    messages.info(
-                        self.request, "You can contact with seller to pay offline")
-                    return redirect("/")
                 else:
                     messages.warning(
                         self.request, "Invalid payment option selected")
-                    return redirect('/')
+                    return redirect('core:checkout')
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
             return redirect("core:order-summary")
@@ -398,31 +382,20 @@ class PaymentView(View):
 
 class HomeView(ListView):
     model = Item
-    paginate_by = 12
+    paginate_by = 10
     template_name = "home.html"
 
     def get_queryset(self):
         queryset = Item.objects.all()
         search_query = self.request.GET.get('search', None)
         system_filter = self.request.GET.get('system', None)
-        min_price = self.request.GET.get('min_price', None)
-        max_price = self.request.GET.get('max_price', None)
-        brand_filter = self.request.GET.get('brand', None)
+
         if search_query:
             queryset = queryset.filter(title__icontains=search_query)
         
         if system_filter:
             queryset = queryset.filter(system=system_filter)
 
-        if min_price:
-            queryset = queryset.filter(starting_bid__gte=min_price)
-
-        if max_price:
-            queryset = queryset.filter(starting_bid__lte=max_price)
-
-        if brand_filter:
-            queryset = queryset.filter(brand=brand_filter)
-            
         return queryset
 
 
@@ -757,6 +730,46 @@ class NoticeListView(LoginRequiredMixin, ListView):
         return self.request.user.notifications.unread()
 
 
+@login_required
+def get_checkout(request, bid_id):
+    try:
+
+        print(bid_id)
+        # bid = Bid.objects.get(id=verb)
+        ordered_date = timezone.now()
+        order = Order.objects.create(
+            user=self.request.user, ordered_date=ordered_date)
+        # order.items.add(order_item)
+        form = CheckoutForm()
+        context = {
+            'form': form,
+            'couponform': CouponForm(),
+            'order': order,
+            'DISPLAY_COUPON_FORM': True
+        }
+
+        shipping_address_qs = Address.objects.filter(
+            user=self.request.user,
+            address_type='S',
+            default=True
+        )
+        if shipping_address_qs.exists():
+            context.update(
+                {'default_shipping_address': shipping_address_qs[0]})
+
+        billing_address_qs = Address.objects.filter(
+            user=self.request.user,
+            address_type='B',
+            default=True
+        )
+        if billing_address_qs.exists():
+            context.update(
+                {'default_billing_address': billing_address_qs[0]})
+        return render(self.request, "checkout.html", context)
+    except ObjectDoesNotExist:
+        messages.info(self.request, "You do not have an active order")
+        # return redirect("core:notice-update")
+        return redirect("/")
 
 class NoticeUpdateView(LoginRequiredMixin, View):
     """update notice"""
@@ -771,20 +784,10 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                 price=bid.amount
             )
             ordered_date = timezone.now()
-            print(ordered_date)
             order, created = Order.objects.get_or_create(
                 user=self.request.user, ordered=False)
-
-            order.ordered_date = ordered_date
+            order.ordered_date=ordered_date
             order.items.add(order_item)
-            order.save()
-            notice_id = request.GET.get('notice_id')
-
-            if notice_id:
-                request.user.notifications.get(id=notice_id).mark_as_read()
-            else:
-                request.user.notifications.mark_all_as_read()
-                
             form = CheckoutForm()
             context = {
                 'form': form,
@@ -892,7 +895,7 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                     order.save()
 
                 elif use_default_billing:
-                    print("Using the default billing address")
+                    print("Using the defualt billing address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
                         address_type='B',
@@ -961,12 +964,12 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                     order.save()
                     messages.info(
                         self.request, "You can contact with seller to pay offline")
-                    return redirect("/")
+                    return redirect("core:notice-update")
                 else:
                     messages.warning(
                         self.request, "Invalid payment option selected")
                     # return redirect('core:checkout')
-                    return redirect("/")
+                    return redirect("core:notice-update")
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
             return redirect("core:order-summary")
@@ -1077,32 +1080,3 @@ def rate_seller(request, seller_id):
 
     # Redirect if not a POST request
     return redirect('core:home')
-
-@method_decorator(staff_member_required, name='dispatch')
-class WeeklySalesReportView(View):
-    def get(self, request, *args, **kwargs):
-        end_date = timezone.now()
-        start_date = Order.objects.earliest('start_date').start_date
-
-        weekly_reports = []
-
-        while start_date < end_date:
-            next_week = start_date + timedelta(days=7)
-            orders = Order.objects.filter(
-                ordered_date__range=[start_date, next_week], ordered=True
-            )
-
-            total_sales = sum(order.get_total() for order in orders)
-            total_items_sold = OrderItem.objects.filter(order__in=orders).aggregate(Sum('quantity'))['quantity__sum'] or 0
-
-            weekly_reports.append({
-                'start_date': start_date,
-                'end_date': next_week,
-                'total_sales': total_sales,
-                'total_items_sold': total_items_sold
-            })
-
-            start_date = next_week
-
-        context = {'weekly_reports': weekly_reports}
-        return render(request, 'sales_report.html', context)

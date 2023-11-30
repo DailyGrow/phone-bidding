@@ -22,7 +22,3 @@ sqlparse==0.2.4
 stripe==2.27.0
 urllib3==1.26.9
 django-notifications-hq==1.8.0
-pymysql==1.1.0
-openai==0.28
-mysql-connector-python==8.2.0
-

@@ -8,29 +8,22 @@
 {% block content %}
 <div class="container">
     <div class="row mt-4 ml-4">
-        <a href="{% url 'core:notice-list' %}" class="btn btn-warning" role="button">Clear all unread notice</a>
+        <a href="{% url 'core:notice-list' %}" class="btn btn-warning" role="button">Clear all notice</a>
     </div>
     <!-- unread notice -->
     <div class="row mt-2 ml-4">
         <ul class="list-group">
             {% for notice in notices %}
                 <li class="list-group-item" id="notice_link">
-                    <span>New Notification:&nbsp;&nbsp;&nbsp;</span>
+                    <a href="{% url 'core:notice-update' notice.verb %}"
+                       target="_blank"
+                    >
                     <span style="color: #5897fb;">
                         {{ notice.actor }}
                     </span>
-                        on <span style="color: #01a252;">{{ notice.target }}</span>
-                    deal <span style="color: blue;">{{ notice.verb }}</span>
-
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ notice.timestamp|date:"Y/m/d H:i" }}&nbsp;&nbsp;&nbsp;
-                    <a class="custom-button" href="{% url 'core:notice-update' notice.verb %}"
-                       target="_blank"
-                       role="button"
-                    >Agree</a>&nbsp;&nbsp;
-                    <a class=custom-button" href="{% url 'core:notice-list' %}"
-                       target="_blank"
-                       role="button"
-                    >Disagree</a>
+                        on <span style="color: #01a252;">{{ notice.target }}</span> deal {{ notice.verb }}
+                    </a>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ notice.timestamp|date:"Y/m/d H:i" }}
                 </li>
             {% endfor %}
         </ul>
@@ -45,16 +38,5 @@
     #notice_link a:visited {
         color: lightgrey;
     }
-    .custom-button {
-   `color: #0099CC;
-    background-color: red;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    }
-    .custom-button:hover {
-      background-color: #008CBA;
-      color: white;
-}
 </style>
 {% endblock content %}

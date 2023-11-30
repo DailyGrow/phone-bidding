@@ -45,23 +45,54 @@
                         >
                     </li>
                 </ul>
-                <!-- Links -->
+                <!-- Search and Price Filter Form -->
+    <form class="form-inline" method="get" action="{% url 'core:home' %}">
+        <!-- Search Input -->
+        <div class="md-form my-0">
+            <input
+                class="form-control mr-sm-2"
+                type="text"
+                name="search"
+                placeholder="Search"
+                aria-label="Search"
+            />
+        </div>
 
-                <form
-                    class="form-inline"
-                    method="get"
-                    action="{% url 'core:home' %}"
-                >
-                    <div class="md-form my-0">
-                        <input
-                            class="form-control mr-sm-2"
-                            type="text"
-                            name="search"
-                            placeholder="Search"
-                            aria-label="Search"
-                        />
-                    </div>
-                </form>
+        <!-- Brand Filter -->
+    <select name="brand" class="form-control mr-sm-2">
+        <option value="">All Brands</option>
+        <option value="APPLE">Apple</option>
+        <option value="SAMSUNG">Samsung</option>
+        <option value="XIAOMI">Xiaomi</option>
+        <option value="HUAWEI">Huawei</option>
+        <option value="GOOGLE">Google</option>
+        <option value="ONEPLUS">One Plus</option>
+        <option value="SONY">Sony</option>
+    </select>
+
+
+    <input
+    type="number"
+    name="min_price"
+    placeholder="Min Price"
+    aria-label="Minimum Price"
+    class="form-control mr-sm-2"
+    style="width: 110px;"
+/>
+<input
+    type="number"
+    name="max_price"
+    placeholder="Max Price"
+    aria-label="Maximum Price"
+    class="form-control mr-sm-2"
+    style="width: 115px;"
+/>
+
+        <!-- Submit Button -->
+<button type="submit" class="btn btn-primary my-2 my-sm-0">
+    <i class="fas fa-search"></i> Search
+</button>
+    </form>
             </div>
             <!-- Collapsible content -->
         </nav>
@@ -76,12 +107,11 @@
                         <div class="view overlay">
                             {% comment %}
                             <img
-                                src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg"
-                                class="card-img-top"
                                 {%endcomment%}
                                 <img
                                 src="{{ item.image.url }}"
                                 class="card-img-top phone-image"
+                                style="width: 250px; height: 250px; object-fit: cover;"
                             />
                             <a href="{{ item.get_absolute_url }}">
                                 <div class="mask rgba-white-slight"></div>
@@ -89,8 +119,8 @@
                         </div>
 
                         <div class="card-body text-center">
-                            <a href="" class="grey-text">
-                                <h5>{{ item.get_category_display }}</h5>
+                            <a href="{{ item.get_absolute_url }}" class="grey-text">
+                                <h5>{{ item.condition }}</h5>
                             </a>
                             <h5>
                                 <strong>

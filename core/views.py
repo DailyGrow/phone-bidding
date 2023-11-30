@@ -2,6 +2,7 @@ import random
 import string
 
 import stripe
+from .tracking import *
 from django.db.models import Sum
 from django.conf import settings
 from django.contrib import messages
@@ -69,31 +70,7 @@ def order_history(request):
             'total': order.get_total(),  # Adjust as needed
         })
     return render(request, 'order_history.html', {'orders': order_items_with_details})    
-    """
-    # Retrieve item information for each order
-    order_items_with_details = []
-    for order in orders:
-
-        order_items = OrderItem.objects.filter(order=order)
-        order_items_details = []
-        for order_item in order_items:
-            item_details = {
-                'item': order_item.item,
-                'quantity': order_item.quantity,
-                'price': order_item.get_final_price(),
-                'subtotal': order_item.get_final_price() * order_item.quantity,
-            }
-            order_items_details.append(item_details)
-        order_items_with_details.append({
-            'order': order,
-            'order_item': item_details,
-            'total': order.get_total(),  # Adjust as needed
-        })
-
-        print(order_items_with_details)
-
-    return render(request, 'order_history.html', {'orders': order_items_with_details})
-    """
+  
 class CheckoutView(View):
     def get(self, *args, **kwargs):
         try:
@@ -848,8 +825,9 @@ class NoticeUpdateView(LoginRequiredMixin, View):
         try:
 
             order = Order.objects.get(user=self.request.user, ordered=False)
+            tracking_number = generate_tracking_number() 
+            order.tracking_number = tracking_number
             if form.is_valid():
-
                 use_default_shipping = form.cleaned_data.get(
                     'use_default_shipping')
                 if use_default_shipping:
@@ -982,8 +960,7 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                     # order.payment = payment
                     order.ref_code = create_ref_code()
                     #generate tracking
-                    tracking_number = generate_tracking_number() 
-                    order.tracking_number = tracking_number
+                   
                     order.save()
                     messages.info(
                         self.request, "You can contact with seller to pay offline")

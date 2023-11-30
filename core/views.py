@@ -2,6 +2,7 @@ import random
 import string
 
 import stripe
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -20,6 +21,7 @@ from notifications.signals import notify
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, Bid, Message
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+
 
 User = get_user_model()
 
@@ -50,15 +52,17 @@ def order_history(request):
     # Retrieve item information for each order
     order_items_with_details = []
     for order in orders:
-        order_item = OrderItem.objects.get(order=order)
 
-        item_details = {
-            'item': order_item.item,
-            'quantity': order_item.quantity,
-            'price': order_item.get_final_price(),  # You might need to adjust this based on your model
-            'subtotal': order_item.get_final_price() * order_item.quantity,  # Adjust as needed
-        }
-
+        order_items = OrderItem.objects.filter(order=order)
+        order_items_details = []
+        for order_item in order_items:
+            item_details = {
+                'item': order_item.item,
+                'quantity': order_item.quantity,
+                'price': order_item.get_final_price(),
+                'subtotal': order_item.get_final_price() * order_item.quantity,
+            }
+            order_items_details.append(item_details)
         order_items_with_details.append({
             'order': order,
             'order_item': item_details,
@@ -772,7 +776,7 @@ class NoticeUpdateView(LoginRequiredMixin, View):
     def get(self, request, **kwargs):
         try:
             verb = kwargs.get('notice_verb')
-            bid = Bid.objects.get(id=verb)
+            bid = Bid.objects.filter(id=verb).first()
             order_item, created = OrderItem.objects.get_or_create(
                 item=bid.item,
                 user=request.user,
@@ -954,6 +958,9 @@ class NoticeUpdateView(LoginRequiredMixin, View):
                     order.ordered = True
                     # order.payment = payment
                     order.ref_code = create_ref_code()
+                    #generate tracking
+                    tracking_number = generate_tracking_number() 
+                    order.tracking_number = tracking_number
                     order.save()
                     messages.info(
                         self.request, "You can contact with seller to pay offline")

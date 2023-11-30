@@ -1,5 +1,12 @@
 import requests
+import random
+
+
 from django.core.exceptions import ObjectDoesNotExist
+
+def generate_tracking_number():
+    mylist=['1Z-0X6W74-12-9801050-9', '1Z-X62777-03-1002089-6', '1Z-3RA349-20-0158956-5','1Z-12345-01-9876-5432','1Z-ABC12-34-5678-90','1Z-XYZ99-88-7654-321','1Z-LMN11-22-3333-444','1Z-45678-90-9876-543']
+    return random.choice (mylist)
 
 def generate_ups_tracking_number():
     # UPS API endpoint for generating a tracking number

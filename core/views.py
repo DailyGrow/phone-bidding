@@ -401,13 +401,24 @@ class HomeView(ListView):
         queryset = Item.objects.all()
         search_query = self.request.GET.get('search', None)
         system_filter = self.request.GET.get('system', None)
-
+        min_price = self.request.GET.get('min_price', None)
+        max_price = self.request.GET.get('max_price', None)
+        brand_filter = self.request.GET.get('brand', None)
         if search_query:
             queryset = queryset.filter(title__icontains=search_query)
         
         if system_filter:
             queryset = queryset.filter(system=system_filter)
 
+        if min_price:
+            queryset = queryset.filter(starting_bid__gte=min_price)
+
+        if max_price:
+            queryset = queryset.filter(starting_bid__lte=max_price)
+
+        if brand_filter:
+            queryset = queryset.filter(brand=brand_filter)
+            
         return queryset
 
 

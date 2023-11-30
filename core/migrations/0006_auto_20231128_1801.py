@@ -11,22 +11,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='orderitem',
-            name='price',
-            field=models.DecimalField(decimal_places=2, default=100, max_digits=9, null=True, validators=[django.core.validators.MinValueValidator(0.01)]),
-        ),
-        migrations.AddField(
-            model_name='userprofile',
-            name='rating_all',
-            field=models.DecimalField(decimal_places=1, default=0, max_digits=4),
-        ),
-        migrations.AddField(
-            model_name='userprofile',
-            name='rating_num',
-            field=models.IntegerField(default=0),
-        ),
-        migrations.AlterField(
+
+      migrations.AlterField(
             model_name='item',
             name='brand',
             field=models.CharField(choices=[('APPLE', 'apple'), ('SAMSUNG', 'samsung'), ('XIAOMI', 'xiaomi'), ('HUAWEI', 'huawei'), ('GOOGLE', 'google'), ('ONEPLUS', 'one plus'), ('SONY', 'sony')], max_length=50, null=True),

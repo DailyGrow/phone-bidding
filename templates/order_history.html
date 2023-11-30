@@ -22,22 +22,21 @@
                 </tr>
             </thead>
             <tbody>
-                {% for order in orders %}
-                {% for order_item in order.order_items %}
+                {% for orderdetail in orders %}
                 <tr>
-                    <td>{{ order_item.item.title }}</td>
-                    <td>{{ order_item.quantity }}</td>
-                    <td>{{ order_item.price }}</td>
-                    <td>{{ order_item.subtotal }}</td>
-                    <td>{{ order.ordered_date }}</td>
-                    <td>{{ order.being_delivered }}</td>
-                    <td>{{ order.tracking_number }}</td>
-                    <td>{{ order.received }}</td>
-                    <td>{{ order.refund_requested }}</td>
-                    <td>{{ order.refund_granted }}</td>
+                    <td>{{ orderdetail.order_item.item }}</td>
+                    <td>{{ orderdetail.order_item.quantity }}</td>
+                    <td>{{ orderdetail.order_item.price }}</td>
+                    <td>{{ orderdetail.order_item.subtotal }}</td>
+                    <td>{{ orderdetail.order.start_date }}</td>
+                    <td>{{ orderdetail.order.being_delivered }}</td>
+                    <td>{{ orderdetail.order.tracking_number }}</td>
+                    <td>{{ orderdetail.order.received }}</td>
+                    <td>{{ orderdetail.order.refund_requested }}</td>
+                    <td>{{ orderdetail.order.refund_granted }}</td>
                     <!-- Add more cells as needed -->
                 </tr>
-                {% endfor %}
+
                 {% endfor %}
             </tbody>
         </table>

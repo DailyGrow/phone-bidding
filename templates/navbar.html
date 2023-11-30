@@ -1,5 +1,5 @@
 {% load cart_template_tags %} {% load notifications_tags %}
-{% notifications_unread as unread_count %}
+{%notifications_unread as unread_count %}
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
     <div class="container">
@@ -54,18 +54,6 @@
                         </span>
                     </a>
                 </li>
-
-                <li class="nav-item">
-                    <a href="{% url 'core:order-summary' %}" class="nav-link waves-effect">
-                        <span class="badge red z-depth-1 mr-1">
-                            {{ request.user|cart_item_count }}
-                        </span>
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="clearfix d-none d-sm-inline-block">
-                            Cart
-                        </span>
-                    </a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link waves-effect" href="{% url 'core:notice-list' %}">
                         Notice
@@ -77,9 +65,30 @@
                         <span class="clearfix d-none d-sm-inline-block">Messages</span>
                     </a>
                 </li>
+                {% if user.is_staff %}
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" href="{% url 'core:sales_report' %}">
+                        <span class="clearfix d-none d-sm-inline-block">Sales Report</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link waves-effect" href="{% url 'admin:index' %}">
+                      <span class="clearfix d-none d-sm-inline-block">DB Management</span>
+                  </a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link waves-effect" href="{% url 'core:profile_update' request.user.userprofile.id %}">
                         <span class="clearfix d-none d-sm-inline-block">Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                     <a
+                        class="nav-link waves-effect"
+                    >
+                        <span class="clearfix d-none d-sm-inline-block">
+                            Hi, {{request.user}}
+                        </span>
                     </a>
                 </li>
                 <li class="nav-item">

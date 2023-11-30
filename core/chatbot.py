@@ -4,8 +4,9 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
+from django.conf import settings
 
-openai.api_key = "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"
+openai.api_key = settings.OPENAI_API_KEY
 
 class SQLQueryView(View):
     template_name = 'chatbot.html'

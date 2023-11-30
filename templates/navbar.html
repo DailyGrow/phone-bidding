@@ -78,6 +78,11 @@
                 </li>
                 {% endif %}
                 <li class="nav-item">
+                  <a class="nav-link waves-effect" href="{% url 'core:chatbot' %}">
+                      <span class="clearfix d-none d-sm-inline-block">Chatbot</span>
+                  </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link waves-effect" href="{% url 'core:profile_update' request.user.userprofile.id %}">
                         <span class="clearfix d-none d-sm-inline-block">Profile</span>
                     </a>

@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import *
-from .chatbot import *
 
 app_name = 'core'
 
@@ -29,9 +28,8 @@ urlpatterns = [
     path('chat-rooms/', chat_rooms, name='chat_rooms'),
     path('send-message/<int:user_id>/<int:item_id>/', send_message, name='send_message'),
     path('view-messages/<int:user_id>/<int:item_id>/', view_messages, name='view_messages'),
+    path('get-checkout/<notice_verb>', get_checkout, name='get-checkout'),
     path('profile/update/<int:pk>/', UserProfileUpdateView.as_view(), name='profile_update'),
     path('rate-seller/<int:seller_id>/', rate_seller, name='rate_seller'),
     path('order_history/', order_history, name='order_history'),
-    path('sales-report/', WeeklySalesReportView.as_view(), name='sales_report'),
-    path('chatbot/', SQLQueryView.as_view(), name='chatbot'),
 ]

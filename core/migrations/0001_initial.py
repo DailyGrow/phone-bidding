@@ -94,7 +94,6 @@ class Migration(migrations.Migration):
                 ('quantity', models.IntegerField(default=1)),
                 ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.Item')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-
             ],
         ),
         migrations.AddField(

@@ -97,34 +97,6 @@ class Item(models.Model):
             'slug': self.slug
         })
 
-# class Item(models.Model):
-#     title = models.CharField(max_length=100)
-#     price = models.FloatField()
-#     discount_price = models.FloatField(blank=True, null=True)
-#     category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
-#     label = models.CharField(choices=LABEL_CHOICES, max_length=1)
-#     slug = models.SlugField()
-#     description = models.TextField()
-#     image = models.ImageField()
-
-#     def __str__(self):
-#         return self.title
-
-#     def get_absolute_url(self):
-#         return reverse("core:product", kwargs={
-#             'slug': self.slug
-#         })
-
-#     def get_add_to_cart_url(self):
-#         return reverse("core:add-to-cart", kwargs={
-#             'slug': self.slug
-#         })
-
-#     def get_remove_from_cart_url(self):
-#         return reverse("core:remove-from-cart", kwargs={
-#             'slug': self.slug
-#         })
-
 
 class OrderItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -262,22 +234,6 @@ def userprofile_receiver(sender, instance, created, *args, **kwargs):
     if created:
         userprofile = UserProfile.objects.create(user=instance)
 
-
-# class Employee(models.Model):
-#     fname = models.CharField(max_length=8, blank=True, null=True)
-#     minit = models.CharField(max_length=2, blank=True, null=True)
-#     lname = models.CharField(max_length=8, blank=True, null=True)
-#     ssn = models.CharField(primary_key=True, max_length=9)
-#     bdate = models.DateField(blank=True, null=True)
-#     address = models.CharField(max_length=27, blank=True, null=True)
-#     sex = models.CharField(max_length=1, blank=True, null=True)
-#     salary = models.IntegerField()
-#     super_ssn = models.CharField(max_length=9, blank=True, null=True)
-#     dno = models.IntegerField()
-#
-#     class Meta:
-#         # managed = False
-#         db_table = 'employee'
 
 class Message(models.Model):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sent_messages', on_delete=models.CASCADE)

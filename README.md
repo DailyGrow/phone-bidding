@@ -1,6 +1,6 @@
 # Django Phone-bidding
 
-This is a phone bidding website built with Django. CS5200 Course project.
+This is a phone bidding website built with Django.
 Project url: https://db-group8-401802.uw.r.appspot.com/
 
 ---
@@ -9,7 +9,7 @@ Project url: https://db-group8-401802.uw.r.appspot.com/
 
 The website displays phones. Users can bid on other sellers. They can then enter their address and choose Stripe to handle the payment processing.
 
-![image]
+![image](https://github.com/DailyGrow/phone-bidding/blob/master/media_root/system%20graph.png)
 ---
 
 ## Running this project

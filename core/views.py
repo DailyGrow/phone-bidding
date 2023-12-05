@@ -1042,7 +1042,7 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         pk = self.kwargs.get('pk')
         if pk:
-            return get_object_or_404(UserProfile, pk=pk)
+            return get_object_or_404(UserProfile, user_id=pk)
         return UserProfile.objects.get(user=self.request.user)
 
     def get_success_url(self):

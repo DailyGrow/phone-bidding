@@ -69,7 +69,7 @@ class Item(models.Model):
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     slug = models.SlugField(unique=True, blank=True)
-    image = models.ImageField(null=True)
+    image = models.ImageField(blank=True, default='default.jpg')
 
     def save(self, *args, **kwargs):
         if not self.slug:

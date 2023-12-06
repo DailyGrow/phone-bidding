@@ -64,11 +64,30 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_in_env')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
+if os.getenv('GAE_APPLICATION',None):
+    STATIC_URL = '/static/'
+    MEDIA_URL = '/media/'
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_in_env')]
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
+else:
+    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+
+    GS_PROJECT_ID = 'DB-GROUP8'#'PROJECT ID FOUND IN GOOGLE CLOUD'
+    GS_STATIC_BUCKET_NAME = '5200_bucket'
+    GS_MEDIA_BUCKET_NAME = '5200_bucket'  # same as STATIC BUCKET if using single bucket both for static and media
+
+    STATIC_URL = 'https://storage.googleapis.com/{}/static/'.format(GS_STATIC_BUCKET_NAME)
+    STATIC_ROOT = "static/"
+
+    MEDIA_URL = 'https://storage.googleapis.com/{}/media/'.format(GS_MEDIA_BUCKET_NAME)
+    MEDIA_ROOT = "media/"
+
+    UPLOAD_ROOT = 'media/uploads/'
+
+    DOWNLOAD_ROOT = os.path.join(BASE_DIR, "static/media/downloads")
+    DOWNLOAD_URL = BASE_DIR + "media/downloads"
 
 # Auth
 

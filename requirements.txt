@@ -25,4 +25,6 @@ django-notifications-hq==1.8.0
 pymysql==1.1.0
 openai==0.28
 mysql-connector-python==8.2.0
+django-storages==1.13
+google-cloud-storage==2.4.0
 
